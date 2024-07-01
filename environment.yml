@@ -1,0 +1,28 @@
+name: timesync-prototype
+channels:
+  - defaults
+dependencies:
+  - python=3.10
+  - pytorch
+  - pytorch-cuda=12.1
+  - torchaudio
+  - torchvision
+  - graphviz
+  - gymnasium
+  - ipykernel
+  - ipython
+  - matplotlib
+  - networkx
+  - numpy
+  - pandas
+  - scipy
+  - sympy
+  - tqdm
+  - conda-forge::imageio
+  - conda-forge::tensorboard
+  - anaconda::jupyter
+  - pygraphviz
+  - python-graphviz
+  - black
+  - pytest
+prefix: /home/davidmauderli/.conda/envs/timesync-prototype
