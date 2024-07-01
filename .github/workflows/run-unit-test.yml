@@ -1,0 +1,14 @@
+name: Unit Test Workflow 
+run-name: ${{ github.actor }} is running unit tests.
+on: [push]
+jobs:
+  run-unit-tests:
+    runs-on: ubuntu-latest
+    steps: 
+      - uses: actions/checkout@v4
+      - name: 🚧 Spin-up CI-Container 🚧
+        run: ci/scripts/start_ci_container.sh
+      - name: 🧪 Run Python Unit Tests 🧪
+        run: ci/scripts/run_unit_tests.sh
+      - name: 🧹 Clean-Up CI-Container 🧹
+        run: ci/scripts/stop_ci_container.sh
