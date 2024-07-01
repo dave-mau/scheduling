@@ -1,10 +1,11 @@
 FROM python:3.10.14-bookworm
 
-#RUN apt-get update && apt-get install -y \
-#    graphviz graphviz-dev
+# Install pytorch (cpu)
 RUN python3 -m pip install \
     torch torchvision torchaudio \
     --index-url https://download.pytorch.org/whl/cpu
+
+# Install remaining python packages
 RUN python3 -m pip install \
     black==24.4.2 \
     graphviz \
@@ -19,7 +20,7 @@ RUN python3 -m pip install \
     sympy \
     tqdm
 
-# Create a new user inside the container with the same IDs as the host user
+# Add ci-user
 RUN useradd -ms /bin/bash ci
 USER ci
 WORKDIR /home/ci
