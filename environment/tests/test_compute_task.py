@@ -46,7 +46,6 @@ def test_start_cycle_sets_timers(setup_compute_task):
     assert task.t_end == 20
     assert task.result == Message(1, 1, 1)
     assert task.compute_info == ComputeTaskInfo(4, 2)
-    assert False
 
 
 def test_run_twice_raises(setup_compute_task):
