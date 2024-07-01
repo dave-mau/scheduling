@@ -6,4 +6,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: docker ps
+      - run: ci/scripts/start_ci_container.sh
+      - run: ci/scripts/run_unit_tests.sh
+      - run: ci/scripts/stop_ci_container.sh
