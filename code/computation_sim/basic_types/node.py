@@ -19,9 +19,11 @@ class Node(ABC):
     def id(self) -> NodeId:
         return self.__id
 
-    @property
     @abstractmethod
-    def inputs(self) -> List["Node"]:
+    def receive(self, message: Message):
+        """
+        Receive a message and process it accordingly.
+        """
         pass
 
     @property
@@ -49,10 +51,3 @@ class Node(ABC):
         Accept a visitor and let it visit this node.
         """
         visitor.visit_node(self)
-
-    @abstractmethod
-    def receive(self, message: Message):
-        """
-        Receive a message and process it accordingly.
-        """
-        pass
