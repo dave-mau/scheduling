@@ -1,17 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import List
-
-
-class NodeDrawer:
-    @property
-    def draw_settings(self) -> dict:
-        return {
-            "shape": "circle",
-            "color": "black",
-            "penwidth": "1.0",
-            "fillcolor": "white",
-            "style": "filled",
-        }
+from uuid import uuid4
+from .types import Time, NodeId
+from .message import Message
 
 
 class Visitor(ABC):
@@ -21,6 +12,13 @@ class Visitor(ABC):
 
 
 class Node(ABC):
+    def __init__(self, id: NodeId = None):
+        self.__id = id if id else uuid4()
+
+    @property
+    def id(self) -> NodeId:
+        return self.__id
+
     @property
     @abstractmethod
     def inputs(self) -> List["Node"]:
@@ -33,18 +31,28 @@ class Node(ABC):
 
     @property
     @abstractmethod
-    def state(self) -> List["Node"]:
+    def state(self) -> List[float]:
+        """
+        Describe what this property represents.
+        """
         pass
 
-    @property
     @abstractmethod
-    def drawer(self) -> NodeDrawer:
-        pass
-
-    @drawer.setter
-    @abstractmethod
-    def drawer(self, value):
+    def update(self, time: Time):
+        """
+        Update the node's state based on the given time.
+        """
         pass
 
     def visit(self, visitor: Visitor):
+        """
+        Accept a visitor and let it visit this node.
+        """
         visitor.visit_node(self)
+
+    @abstractmethod
+    def receive(self, message: Message):
+        """
+        Receive a message and process it accordingly.
+        """
+        pass

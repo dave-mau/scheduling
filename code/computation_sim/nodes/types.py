@@ -1,0 +1,2 @@
+Time = int
+NodeId = str
