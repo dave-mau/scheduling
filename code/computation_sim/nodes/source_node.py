@@ -51,13 +51,17 @@ class PeriodicEpochSender(SourceStrategy):
         self.epoch = epoch
         self.period = period
         self.disturbance = disturbance
-        self.next_send_time = self.epoch
+        self.nominal_send_time = self.epoch
+        self.actual_send_time = self.nominal_send_time
 
     def update(self, time: Time) -> object:
-        if time >= self.next_send_time:
-            elapsed = time - self.epoch
-            next_period = elapsed // self.period + 1
-            self.next_send_time = (
-                self.epoch + next_period * self.period + self.disturbance.sample()
-            )
+        if time > self.actual_send_time:
+            self.nominal_send_time += self.epoch
+            while self.actual_send_time <= time:
+                self.actual_send_time = (
+                    self.nominal_send_time + self.disturbance.sample()
+                )
             return {}
+
+    def reset(self):
+        self.nominal_send_time = self.epoch
