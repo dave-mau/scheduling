@@ -58,9 +58,7 @@ class PeriodicEpochSender(SourceStrategy):
         if time > self.actual_send_time:
             self.nominal_send_time += self.epoch
             while self.actual_send_time <= time:
-                self.actual_send_time = (
-                    self.nominal_send_time + self.disturbance.sample()
-                )
+                self.actual_send_time = self.nominal_send_time + self.disturbance.sample()
             return {}
 
     def reset(self):
