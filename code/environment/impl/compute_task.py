@@ -12,9 +12,7 @@ ComputeTaskInfo = namedtuple("ComputeTaskInfo", ["num_inputs", "num_rejected_inp
 
 class ComputeTask(ABC):
 
-    def __init__(
-        self, time_provider: TimeProvider, execution_time: ExecutionTimeSampler
-    ):
+    def __init__(self, time_provider: TimeProvider, execution_time: ExecutionTimeSampler):
         """Compute tasks that accepts a set of symbolic inputs and returns a single, symbolic output
 
         The compute task takes a duration that is sampled from the `execution_time` samples.
@@ -72,9 +70,7 @@ class ComputeTask(ABC):
     def run(self, input_args: List[Message]):
         """Given a list of inputs, compute the result and sample the simulated task duration."""
         if self.is_running:
-            raise RuntimeError(
-                "Cannot run compute task while a task is already running."
-            )
+            raise RuntimeError("Cannot run compute task while a task is already running.")
         self._result, self._compute_info, self._duration = self._exec(input_args)
 
         self._t_start = self._time_provider.time
@@ -88,24 +84,18 @@ class ComputeTask(ABC):
         self._compute_info = None
 
     @abstractmethod
-    def _exec(
-        self, input_args: List[Message]
-    ) -> Tuple[Message, ComputeTaskInfo, TimeMs]:
+    def _exec(self, input_args: List[Message]) -> Tuple[Message, ComputeTaskInfo, TimeMs]:
         pass
 
 
 class SISOComputeTask(ComputeTask):
-    def _exec(
-        self, input_args: List[Message]
-    ) -> Tuple[Message, ComputeTaskInfo, TimeMs]:
+    def _exec(self, input_args: List[Message]) -> Tuple[Message, ComputeTaskInfo, TimeMs]:
         if len(input_args) == 1 and input_args[0]:
             return input_args[0], ComputeTaskInfo(1, 0), self._execution_time.sample()
         elif len(input_args) == 1 and not input_args[0]:
             return input_args[0], ComputeTaskInfo(1, 1), 0
         else:
-            raise RuntimeError(
-                f"SISOComputeTask must receive exactly one input (got {len(input_args)})."
-            )
+            raise RuntimeError(f"SISOComputeTask must receive exactly one input (got {len(input_args)}).")
 
 
 class MISOFusionTask(ComputeTask):
@@ -118,9 +108,7 @@ class MISOFusionTask(ComputeTask):
         super().__init__(time_provider, execution_time)
         self._filter_thresh = filter_thresh
 
-    def _exec(
-        self, input_args: List[Message]
-    ) -> Tuple[Message, ComputeTaskInfo, TimeMs]:
+    def _exec(self, input_args: List[Message]) -> Tuple[Message, ComputeTaskInfo, TimeMs]:
         n_inputs = len(input_args)
 
         if len(input_args) == 0:
@@ -134,18 +122,14 @@ class MISOFusionTask(ComputeTask):
         max_time = self._get_max_time(input_args)
 
         # Reject the inputs according to the filtering criterion
-        accepted = list(
-            filter(lambda msg: self._filter_criterion(msg, max_time), input_args)
-        )
+        accepted = list(filter(lambda msg: self._filter_criterion(msg, max_time), input_args))
 
         # Avoid division by zero
         if len(accepted) == 0:
             return None, ComputeTaskInfo(n_inputs, n_inputs), 0
 
         # Happy path: At least one input accepted
-        avg_accepted_time = sum(getattr(msg, "avg_time") for msg in accepted) / len(
-            accepted
-        )
+        avg_accepted_time = sum(getattr(msg, "avg_time") for msg in accepted) / len(accepted)
         max_accepted_time = max(getattr(msg, "max_time") for msg in accepted)
         min_accepted_time = min(getattr(msg, "min_time") for msg in accepted)
         return (

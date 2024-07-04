@@ -116,9 +116,7 @@ class ProcessingNode(Node):
         self._compute_task.run(inputs)
         self._state = ProcessingState.BUSY
         if self._message_loss_counter:
-            self._message_loss_counter.register_loss(
-                self.id, self._compute_task.compute_info.num_rejected_inputs
-            )
+            self._message_loss_counter.register_loss(self.id, self._compute_task.compute_info.num_rejected_inputs)
 
     def read_inputs(self) -> List[Message]:
         """Collects copies of the messages in the input buffers and wipes all input buffers afterwards."""
@@ -192,10 +190,7 @@ class InputNode(Node):
 
     @round_to_milliseconds
     def nominal_last_trigger_time(self):
-        return (
-            self._time_provider.time
-            - (self._time_provider.time - self._t0Ms) % self._tauMs
-        )
+        return self._time_provider.time - (self._time_provider.time - self._t0Ms) % self._tauMs
 
     @round_to_milliseconds
     def nominal_next_trigger_time(self):

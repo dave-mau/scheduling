@@ -33,6 +33,4 @@ from .impl.message_loss_counter import MessageLossCounter
 
 from gymnasium.envs.registration import register
 
-register(
-    id="time-scheduling-v0", entry_point="environment.environment:TimeSchedulingEnv"
-)
+register(id="time-scheduling-v0", entry_point="environment.environment:TimeSchedulingEnv")
