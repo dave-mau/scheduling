@@ -13,7 +13,7 @@ class Visitor:
 class Node(ABC):
     def __init__(self, id: NodeId = None):
         self.__id = id if id else uuid4()
-        self._outputs: Dict[NodeId, Node] = []
+        self._outputs: List[Node] = []
 
     @property
     def id(self) -> NodeId:
