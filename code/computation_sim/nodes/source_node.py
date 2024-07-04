@@ -45,9 +45,7 @@ class SourceNode(Node):
 
     def add_output(self, output: Node) -> None:
         if output in self.outputs:
-            raise ValueError(
-                f"The node with id {output.id} cannot be added twice as output."
-            )
+            raise ValueError(f"The node with id {output.id} cannot be added twice as output.")
         self._outputs.append(output)
 
     @property
@@ -66,9 +64,7 @@ class SourceNode(Node):
 
 
 class PeriodicEpochTrigger(SourceTrigger):
-    def __init__(
-        self, epoch: Time, period: Time, disturbance: DurationSampler, **kwargs
-    ):
+    def __init__(self, epoch: Time, period: Time, disturbance: DurationSampler, **kwargs):
         super().__init__(**kwargs)
         self.epoch = epoch
         self.period = period
@@ -80,9 +76,7 @@ class PeriodicEpochTrigger(SourceTrigger):
         if time >= self.actual_send_time:
             self.nominal_send_time += self.period
             while self.actual_send_time <= time:
-                self.actual_send_time = (
-                    self.nominal_send_time + self.disturbance.sample()
-                )
+                self.actual_send_time = self.nominal_send_time + self.disturbance.sample()
             return self.sensor.measure(time)
         return None
 
