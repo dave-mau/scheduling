@@ -15,6 +15,6 @@ Header = namedtuple(
 
 
 class Message(object):
-    def __init__(self, header: Header, data: object):
+    def __init__(self, header: Header, data: object = None):
         self.header = header
         self.data = data
