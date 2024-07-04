@@ -27,11 +27,9 @@ class SourceNode(Node):
         self._strategy = strategy
 
     def receive(self, message: Message) -> None:
-        super().receive(message)
         raise CommunicationError("Source node cannot receive a message.")
 
     def add_output(self, output: Node) -> None:
-        super().add_output(output)
         if output in self.outputs:
             raise ValueError(
                 f"The node with id {output.id} cannot be added twice as output."
