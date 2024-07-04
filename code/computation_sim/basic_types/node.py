@@ -3,9 +3,10 @@ from typing import List
 from uuid import uuid4
 from .types import Time, NodeId
 from .message import Message
+from .draw_context import DrawContext
 
 
-class Visitor(ABC):
+class Visitor:
     @abstractmethod
     def visit_node(self, node: "Node"):
         pass
@@ -21,9 +22,6 @@ class Node(ABC):
 
     @abstractmethod
     def receive(self, message: Message):
-        """
-        Receive a message and process it accordingly.
-        """
         pass
 
     @property
@@ -31,23 +29,22 @@ class Node(ABC):
     def outputs(self) -> List["Node"]:
         pass
 
+    @abstractmethod
+    def add_output(self, output: "Node") -> None:
+        pass
+
     @property
     @abstractmethod
     def state(self) -> List[float]:
-        """
-        Describe what this property represents.
-        """
         pass
 
     @abstractmethod
     def update(self, time: Time):
-        """
-        Update the node's state based on the given time.
-        """
+        pass
+
+    @abstractmethod
+    def draw(self, draw_context: DrawContext):
         pass
 
     def visit(self, visitor: Visitor):
-        """
-        Accept a visitor and let it visit this node.
-        """
         visitor.visit_node(self)
