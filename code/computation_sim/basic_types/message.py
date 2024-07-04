@@ -7,9 +7,9 @@ Header = namedtuple(
     (
         "sender_id",
         "destination_id",
-        "oldest_measurement",
-        "newest_measurement",
-        "average_measurement",
+        "t_measure_oldest",
+        "t_measure_youngest",
+        "t_measure_average",
     ),
 )
 
