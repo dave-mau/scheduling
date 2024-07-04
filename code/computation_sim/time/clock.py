@@ -13,11 +13,11 @@ def round_to_fixed_point(func):
 
 
 class Clock:
-    def __init__(self, t0: Time):
-        self._t0 = t0
-        self._time = Time(t0)
+    def __init__(self, initial_time: Time):
+        self._initial_time = initial_time
+        self._time = Time(initial_time)
 
-    def get_time_ms(self) -> Time:
+    def get_time(self) -> Time:
         """Returns the current epoch time in milliseconds."""
         return self._time
 
@@ -32,7 +32,7 @@ class Clock:
 
     def reset(self):
         """Resets the current time to the initial epoch time."""
-        self._time = Time(self._t0)
+        self._time = Time(self._initial_time)
 
     def __iadd__(self, value: Time):
         """Advance current time by value"""
@@ -53,4 +53,4 @@ class TimeProvider:
     @property
     def time(self) -> Time:
         """Get the current time in milliseconds relative to the last epoch."""
-        return self._clock.get_time_ms()
+        return self._clock.get_time()
