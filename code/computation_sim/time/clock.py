@@ -1,5 +1,5 @@
 from numpy import round
-from ..basic_types import Time
+from computation_sim.basic_types import Time
 
 
 def round_to_fixed_point(func):

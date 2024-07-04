@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Dict
 from uuid import uuid4
-from ..basic_types.message import Message
-from ..basic_types.types import NodeId, Time
+from computation_sim.basic_types import Message, NodeId, Time
 
 
 class Visitor:

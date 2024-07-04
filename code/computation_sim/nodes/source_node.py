@@ -1,6 +1,12 @@
-from ..basic_types import NodeId, Message, CommunicationError, Time, Header
-from ..time import DurationSampler
-from . import Node
+from computation_sim.basic_types import (
+    NodeId,
+    Message,
+    CommunicationError,
+    Time,
+    Header,
+)
+from computation_sim.time import DurationSampler
+from .node import Node
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
@@ -54,12 +60,16 @@ class PeriodicEpochSender(SourceStrategy):
         self.nominal_send_time = self.epoch
         self.actual_send_time = self.nominal_send_time
 
-    def update(self, time: Time) -> object:
-        if time > self.actual_send_time:
-            self.nominal_send_time += self.epoch
+    def update(self, time: Time) -> Optional[object]:
+        if time >= self.actual_send_time:
+            self.nominal_send_time += self.period
             while self.actual_send_time <= time:
-                self.actual_send_time = self.nominal_send_time + self.disturbance.sample()
+                self.actual_send_time = (
+                    self.nominal_send_time + self.disturbance.sample()
+                )
             return {}
+        return None
 
     def reset(self):
         self.nominal_send_time = self.epoch
+        self.actual_send_time = self.nominal_send_time
