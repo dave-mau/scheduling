@@ -19,6 +19,16 @@ class FixedDuration(DurationSampler):
         return self.val
 
 
+class GaussianTimeSampler(DurationSampler):
+    def __init__(self, mu: float, std: float):
+        self._mu = mu
+        self._std = std
+
+    @round_to_fixed_point
+    def sample(self) -> Time:
+        return np.random.normal(self._mu, self._std)
+
+
 class GammaDistributionSampler(DurationSampler):
     def __init__(self, k, theta, gain: float = 1.0, offset: float = 0.0):
         self._k = k
