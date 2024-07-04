@@ -1,6 +1,6 @@
 from typing import List
-from .types import Time, NodeId
 from typing import Dict, Any
+from .types import NodeId
 
 
 class Message(object):

@@ -92,9 +92,7 @@ def test_compile_none_action(setup_empty_system):
         nodes.append(make_mock_node(f"NODE_{i}"))
 
     system.add_processing_node(nodes[2], None, is_action_node=True, is_state_node=True)
-    system.add_processing_node(
-        nodes[1], "NODE_2", is_action_node=False, is_state_node=True
-    )
+    system.add_processing_node(nodes[1], "NODE_2", is_action_node=False, is_state_node=True)
     system.add_input_node(nodes[0], "NODE_1", trigger_next_compute=False)
     system.compile()
 
@@ -113,9 +111,7 @@ def test_compile_none_state(setup_empty_system):
         nodes.append(make_mock_node(f"NODE_{i}"))
 
     system.add_processing_node(nodes[2], None, is_action_node=True, is_state_node=True)
-    system.add_processing_node(
-        nodes[1], "NODE_2", is_action_node=True, is_state_node=False
-    )
+    system.add_processing_node(nodes[1], "NODE_2", is_action_node=True, is_state_node=False)
     system.add_input_node(nodes[0], "NODE_1", trigger_next_compute=False)
     system.compile()
 
@@ -176,15 +172,9 @@ def test_get_state_without_output(setup_simple_tree_system):
     tp.time = 0
     result = system.get_state()
 
-    assert pytest.approx(result.compute_start_ages[0], 1.0e-6) == -(
-        nodes["LEVEL1_0"].compute_task.t_start / 100.0
-    )
-    assert pytest.approx(result.compute_start_ages[1], 1.0e-6) == -(
-        nodes["LEVEL1_1"].compute_task.t_start / 100.0
-    )
-    assert pytest.approx(result.compute_start_ages[2], 1.0e-6) == -(
-        nodes["LEVEL2"].compute_task.t_start / 100.0
-    )
+    assert pytest.approx(result.compute_start_ages[0], 1.0e-6) == -(nodes["LEVEL1_0"].compute_task.t_start / 100.0)
+    assert pytest.approx(result.compute_start_ages[1], 1.0e-6) == -(nodes["LEVEL1_1"].compute_task.t_start / 100.0)
+    assert pytest.approx(result.compute_start_ages[2], 1.0e-6) == -(nodes["LEVEL2"].compute_task.t_start / 100.0)
     for i in range(3):
         assert result.compute_running[i]
         assert not result.buf_out_has_value[i]
@@ -202,44 +192,20 @@ def test_get_state_with_output(setup_simple_tree_system):
     tp.time = 0
     result = system.get_state()
 
-    assert pytest.approx(result.compute_start_ages[0], 1.0e-6) == -(
-        nodes["LEVEL1_0"].compute_task.t_start / 100.0
-    )
-    assert pytest.approx(result.buf_out_min_ages[0], 1.0e-6) == -10 * (
-        nodes["LEVEL1_0"].compute_task.t_start / 100.0
-    )
-    assert pytest.approx(result.buf_out_avg_ages[0], 1.0e-6) == -20 * (
-        nodes["LEVEL1_0"].compute_task.t_start / 100.0
-    )
-    assert pytest.approx(result.buf_out_max_ages[0], 1.0e-6) == -30 * (
-        nodes["LEVEL1_0"].compute_task.t_start / 100.0
-    )
+    assert pytest.approx(result.compute_start_ages[0], 1.0e-6) == -(nodes["LEVEL1_0"].compute_task.t_start / 100.0)
+    assert pytest.approx(result.buf_out_min_ages[0], 1.0e-6) == -10 * (nodes["LEVEL1_0"].compute_task.t_start / 100.0)
+    assert pytest.approx(result.buf_out_avg_ages[0], 1.0e-6) == -20 * (nodes["LEVEL1_0"].compute_task.t_start / 100.0)
+    assert pytest.approx(result.buf_out_max_ages[0], 1.0e-6) == -30 * (nodes["LEVEL1_0"].compute_task.t_start / 100.0)
 
-    assert pytest.approx(result.compute_start_ages[1], 1.0e-6) == -(
-        nodes["LEVEL1_1"].compute_task.t_start / 100.0
-    )
-    assert pytest.approx(result.buf_out_min_ages[1], 1.0e-6) == -10 * (
-        nodes["LEVEL1_1"].compute_task.t_start / 100.0
-    )
-    assert pytest.approx(result.buf_out_avg_ages[1], 1.0e-6) == -20 * (
-        nodes["LEVEL1_1"].compute_task.t_start / 100.0
-    )
-    assert pytest.approx(result.buf_out_max_ages[1], 1.0e-6) == -30 * (
-        nodes["LEVEL1_1"].compute_task.t_start / 100.0
-    )
+    assert pytest.approx(result.compute_start_ages[1], 1.0e-6) == -(nodes["LEVEL1_1"].compute_task.t_start / 100.0)
+    assert pytest.approx(result.buf_out_min_ages[1], 1.0e-6) == -10 * (nodes["LEVEL1_1"].compute_task.t_start / 100.0)
+    assert pytest.approx(result.buf_out_avg_ages[1], 1.0e-6) == -20 * (nodes["LEVEL1_1"].compute_task.t_start / 100.0)
+    assert pytest.approx(result.buf_out_max_ages[1], 1.0e-6) == -30 * (nodes["LEVEL1_1"].compute_task.t_start / 100.0)
 
-    assert pytest.approx(result.compute_start_ages[2], 1.0e-6) == -(
-        nodes["LEVEL2"].compute_task.t_start / 100.0
-    )
-    assert pytest.approx(result.buf_out_min_ages[2], 1.0e-6) == -10 * (
-        nodes["LEVEL2"].compute_task.t_start / 100.0
-    )
-    assert pytest.approx(result.buf_out_avg_ages[2], 1.0e-6) == -20 * (
-        nodes["LEVEL2"].compute_task.t_start / 100.0
-    )
-    assert pytest.approx(result.buf_out_max_ages[2], 1.0e-6) == -30 * (
-        nodes["LEVEL2"].compute_task.t_start / 100.0
-    )
+    assert pytest.approx(result.compute_start_ages[2], 1.0e-6) == -(nodes["LEVEL2"].compute_task.t_start / 100.0)
+    assert pytest.approx(result.buf_out_min_ages[2], 1.0e-6) == -10 * (nodes["LEVEL2"].compute_task.t_start / 100.0)
+    assert pytest.approx(result.buf_out_avg_ages[2], 1.0e-6) == -20 * (nodes["LEVEL2"].compute_task.t_start / 100.0)
+    assert pytest.approx(result.buf_out_max_ages[2], 1.0e-6) == -30 * (nodes["LEVEL2"].compute_task.t_start / 100.0)
 
     for i in range(3):
         assert result.compute_running[i]

@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import List
 from uuid import uuid4
-from .types import Time, NodeId
 from .message import Message
 from .draw_context import DrawContext
+from .types import NodeId, Time
 
 
 class Visitor:

@@ -1,2 +1,2 @@
+NodeId = int
 Time = int
-NodeId = str
