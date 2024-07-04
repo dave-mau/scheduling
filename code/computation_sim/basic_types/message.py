@@ -1,4 +1,3 @@
-from typing import List
 from typing import Dict, Any
 from .types import NodeId
 

@@ -1,9 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Dict
 from uuid import uuid4
-from .message import Message
-from .draw_context import DrawContext
-from .types import NodeId, Time
+from ..basic_types.message import Message
+from ..basic_types.types import NodeId, Time
 
 
 class Visitor:
@@ -15,19 +14,19 @@ class Visitor:
 class Node(ABC):
     def __init__(self, id: NodeId = None):
         self.__id = id if id else uuid4()
+        self._outputs: Dict[NodeId, Node] = []
 
     @property
     def id(self) -> NodeId:
         return self.__id
 
     @abstractmethod
-    def receive(self, message: Message):
+    def receive(self, message: Message) -> None:
         pass
 
     @property
-    @abstractmethod
     def outputs(self) -> List["Node"]:
-        pass
+        return self._outputs
 
     @abstractmethod
     def add_output(self, output: "Node") -> None:
@@ -42,9 +41,13 @@ class Node(ABC):
     def update(self, time: Time):
         pass
 
-    @abstractmethod
-    def draw(self, draw_context: DrawContext):
-        pass
+    # @abstractmethod
+    # def draw(self, draw_context: DrawContext):
+    #    pass
 
     def visit(self, visitor: Visitor):
         visitor.visit_node(self)
+
+    @abstractmethod
+    def reset(self):
+        pass

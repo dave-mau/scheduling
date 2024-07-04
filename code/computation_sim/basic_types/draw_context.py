@@ -1,2 +1,0 @@
-class DrawContext:
-    pass
