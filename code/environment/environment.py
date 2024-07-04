@@ -40,21 +40,15 @@ class TimeSchedulingEnv(gym.Env):
         self._render_mode = render_mode
         self._state_normalization = state_normalization
 
-        self.action_space = spaces.Discrete(
-            int((1 - 2**self._system.num_action_nodes) / (1 - 2))
-        )
+        self.action_space = spaces.Discrete(int((1 - 2**self._system.num_action_nodes) / (1 - 2)))
         self.observation_space = spaces.Box(
             low=np.zeros((self._system.num_states,), dtype=float),
             high=np.concatenate(
                 [
-                    np.inf
-                    * np.ones((self._system.num_state_nodes,)),  # compute_start_ages
-                    np.inf
-                    * np.ones((self._system.num_state_nodes,)),  # buf_out_min_ages
-                    np.inf
-                    * np.ones((self._system.num_state_nodes,)),  # buf_out_avg_ages
-                    np.inf
-                    * np.ones((self._system.num_state_nodes,)),  # buf_out_max_ages
+                    np.inf * np.ones((self._system.num_state_nodes,)),  # compute_start_ages
+                    np.inf * np.ones((self._system.num_state_nodes,)),  # buf_out_min_ages
+                    np.inf * np.ones((self._system.num_state_nodes,)),  # buf_out_avg_ages
+                    np.inf * np.ones((self._system.num_state_nodes,)),  # buf_out_max_ages
                     np.ones((self._system.num_state_nodes,)),  # compute_running
                     np.ones((self._system.num_state_nodes,)),  # buf_out_has_value
                 ],
@@ -76,21 +70,15 @@ class TimeSchedulingEnv(gym.Env):
 
     @property
     def last_output_min_age(self) -> TimeMs:
-        return (
-            self._clock.get_time_ms() - self._last_out.min_time
-        ) / self._state_normalization
+        return (self._clock.get_time_ms() - self._last_out.min_time) / self._state_normalization
 
     @property
     def last_output_avg_age(self) -> TimeMs:
-        return (
-            self._clock.get_time_ms() - self._last_out.avg_time
-        ) / self._state_normalization
+        return (self._clock.get_time_ms() - self._last_out.avg_time) / self._state_normalization
 
     @property
     def last_output_max_age(self) -> TimeMs:
-        return (
-            self._clock.get_time_ms() - self._last_out.max_time
-        ) / self._state_normalization
+        return (self._clock.get_time_ms() - self._last_out.max_time) / self._state_normalization
 
     def reset(self, seed=None):
         super().reset(seed=seed)
@@ -124,12 +112,8 @@ class TimeSchedulingEnv(gym.Env):
             self._last_out = self._system.state_nodes[-1].output.read()
 
         # Get state, compute cost
-        state = self._system.get_state(
-            age_normalization_factor=self._state_normalization
-        )
-        reward = (
-            -self._message_loss_costs * self._system.message_loss_counter.total_counts
-        )
+        state = self._system.get_state(age_normalization_factor=self._state_normalization)
+        reward = -self._message_loss_costs * self._system.message_loss_counter.total_counts
         reward -= self._measurement_time_cost * self.last_output_min_age
         reward -= self._input_cost * np.sum(a)
 
