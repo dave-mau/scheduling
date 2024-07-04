@@ -1,21 +1,20 @@
 from typing import Dict, Any
 from .types import NodeId
+from collections import namedtuple
+
+Header = namedtuple(
+    "Header",
+    (
+        "sender_id",
+        "destination_id",
+        "oldest_measurement",
+        "newest_measurement",
+        "average_measurement",
+    ),
+)
 
 
 class Message(object):
-    def __init__(self, sender_id: NodeId, destination_id: NodeId, data: Dict[str, Any]):
-        self._sender_id = sender_id
-        self._destination_id = destination_id
-        self._data = data
-
-    @property
-    def sender_id(self) -> NodeId:
-        return self._sender_id
-
-    @property
-    def destination_id(self) -> NodeId:
-        return self._destination_id
-
-    @property
-    def data(self) -> NodeId:
-        return self._data
+    def __init__(self, header: Header, data: object):
+        self.header = header
+        self.data = data
