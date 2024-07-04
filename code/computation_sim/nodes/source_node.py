@@ -11,7 +11,21 @@ from abc import ABC, abstractmethod
 from typing import List, Optional
 
 
-class SourceStrategy(ABC):
+class Sensor(ABC):
+    @abstractmethod
+    def measure(self, time: Time) -> object:
+        pass
+
+
+class EmptySensor(Sensor):
+    def measure(self, time: Time) -> object:
+        return {}
+
+
+class SourceTrigger(ABC):
+    def __init__(self, sensor=None):
+        self.sensor = sensor if sensor else EmptySensor()
+
     @abstractmethod
     def update(self, time: Time) -> Optional[object]:
         pass
@@ -22,9 +36,9 @@ class SourceStrategy(ABC):
 
 
 class SourceNode(Node):
-    def __init__(self, strategy: SourceStrategy, id: NodeId = None):
+    def __init__(self, trigger: SourceTrigger, id: NodeId = None):
         super().__init__(id)
-        self._strategy = strategy
+        self._trigger = trigger
 
     def receive(self, message: Message) -> None:
         raise CommunicationError("Source node cannot receive a message.")
@@ -41,18 +55,21 @@ class SourceNode(Node):
         return []
 
     def update(self, time: Time):
-        measurement = self._strategy.update(time)
+        measurement = self._trigger.update(time)
         if measurement:
             for output in self._outputs:
                 header = Header(self.id, output.id, time, time, time)
                 output.receive(Message(header, measurement))
 
     def reset(self):
-        self._strategy.reset()
+        self._trigger.reset()
 
 
-class PeriodicEpochSender(SourceStrategy):
-    def __init__(self, epoch: Time, period: Time, disturbance: DurationSampler):
+class PeriodicEpochTrigger(SourceTrigger):
+    def __init__(
+        self, epoch: Time, period: Time, disturbance: DurationSampler, **kwargs
+    ):
+        super().__init__(**kwargs)
         self.epoch = epoch
         self.period = period
         self.disturbance = disturbance
@@ -66,7 +83,7 @@ class PeriodicEpochSender(SourceStrategy):
                 self.actual_send_time = (
                     self.nominal_send_time + self.disturbance.sample()
                 )
-            return {}
+            return self.sensor.measure(time)
         return None
 
     def reset(self):
