@@ -1,9 +1,7 @@
 from .node import Node
-from .utils import header_to_state
 from computation_sim.basic_types import Message, NodeId, Time
-from computation_sim.time import as_age, TimeProvider
-from typing import List, Callable
-from copy import deepcopy
+from computation_sim.time import TimeProvider
+from typing import List
 
 
 class SinkNode(Node):
