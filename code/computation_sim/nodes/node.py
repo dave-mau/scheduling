@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List, Dict
 from uuid import uuid4
 from computation_sim.basic_types import Message, NodeId, Time
+from computation_sim.time import TimeProvider
 
 
 class Visitor:
@@ -11,7 +12,8 @@ class Visitor:
 
 
 class Node(ABC):
-    def __init__(self, id: NodeId = None):
+    def __init__(self, time_provider: TimeProvider, id: NodeId = None):
+        self._time_provider = time_provider
         self.__id = id if id else uuid4()
         self._outputs: List[Node] = []
 
@@ -23,6 +25,10 @@ class Node(ABC):
     def outputs(self) -> List["Node"]:
         return self._outputs
 
+    @property
+    def time(self) -> Time:
+        return self._time_provider.time
+
     @abstractmethod
     def receive(self, message: Message) -> None:
         pass
@@ -33,7 +39,7 @@ class Node(ABC):
         pass
 
     @abstractmethod
-    def update(self, time: Time):
+    def update(self):
         pass
 
     @abstractmethod

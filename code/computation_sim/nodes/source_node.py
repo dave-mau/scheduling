@@ -5,7 +5,7 @@ from computation_sim.basic_types import (
     Time,
     Header,
 )
-from computation_sim.time import DurationSampler
+from computation_sim.time import DurationSampler, TimeProvider
 from .node import Node
 from abc import ABC, abstractmethod
 from typing import List, Optional
@@ -82,8 +82,8 @@ class PeriodicEpochSensor(Sensor):
 
 
 class SourceNode(Node):
-    def __init__(self, sensor: Sensor, id: NodeId = None):
-        super().__init__(id)
+    def __init__(self, time_provider: TimeProvider, sensor: Sensor, id: NodeId = None):
+        super().__init__(time_provider, id)
         self._sensor = sensor
 
     def receive(self, message: Message) -> None:
@@ -93,8 +93,8 @@ class SourceNode(Node):
     def state(self) -> List[float]:
         return self._sensor.state
 
-    def update(self, time: Time):
-        self._sensor.update(time)
+    def update(self):
+        self._sensor.update(self.time)
         message = self._sensor.get_measurement()
         if message:
             self._send(message)
