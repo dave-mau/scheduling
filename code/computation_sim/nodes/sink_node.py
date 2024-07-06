@@ -26,4 +26,3 @@ class SinkNode(Node):
 
     def reset(self):
         self._received_messages.clear()
-
