@@ -1,8 +1,2 @@
 from .node import Node, Visitor
-from .source_node import (
-    SourceNode,
-    SourceTrigger,
-    PeriodicEpochTrigger,
-    Sensor,
-    EmptySensor,
-)
+from .source_node import Sensor, PeriodicEpochSensor, SourceNode
