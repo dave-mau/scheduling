@@ -19,16 +19,12 @@ class Node(ABC):
     def id(self) -> NodeId:
         return self.__id
 
-    @abstractmethod
-    def receive(self, message: Message) -> None:
-        pass
-
     @property
     def outputs(self) -> List["Node"]:
         return self._outputs
 
     @abstractmethod
-    def add_output(self, output: "Node") -> None:
+    def receive(self, message: Message) -> None:
         pass
 
     @property
@@ -39,6 +35,12 @@ class Node(ABC):
     @abstractmethod
     def update(self, time: Time):
         pass
+
+    @abstractmethod
+    def trigger(self):
+        pass
+
+    # TODO: Add "trigger"
 
     # @abstractmethod
     # def draw(self, draw_context: DrawContext):
