@@ -54,3 +54,8 @@ class TimeProvider:
     def time(self) -> Time:
         """Get the current time in milliseconds relative to the last epoch."""
         return self._clock.get_time()
+
+
+def as_age(stamp: Time, now: Time):
+    assert stamp < now, "Stamp must be in the past."
+    return now - stamp
