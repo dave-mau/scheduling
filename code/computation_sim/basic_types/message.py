@@ -4,7 +4,7 @@ from collections import namedtuple
 
 
 class Header:
-    def __init__(self, t_measure_oldest, t_measure_youngest, t_measure_average):
+    def __init__(self, t_measure_oldest=0, t_measure_youngest=0, t_measure_average=0):
         self.sender_id = None
         self.destination_id = None
         self.t_measure_oldest = t_measure_oldest
