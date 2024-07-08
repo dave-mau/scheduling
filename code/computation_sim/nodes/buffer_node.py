@@ -28,10 +28,15 @@ class RingBufferNode(Node):
         result = []
         for element in self._buffer:
             result.extend(header_to_state(element.header, self.time))
+        return result
 
     @property
     def num_entries(self) -> int:
         return len(self._buffer)
+
+    @property
+    def maxlen(self) -> int:
+        return self._buffer.maxlen
 
     def update(self):
         pass

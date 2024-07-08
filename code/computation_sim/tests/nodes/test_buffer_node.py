@@ -134,3 +134,18 @@ def test_reset(setup_no_callback):
     assert buffer.num_entries == 1
     buffer.reset()
     assert buffer.num_entries == 0
+
+
+def test_state(setup_no_callback):
+    buffer, clock_mock = setup_no_callback
+    clock_mock.time = 6
+    buffer.receive(Message(Header(1, 2, 3)))
+    buffer.receive(Message(Header(4, 5, 6)))
+
+    result = buffer.state
+    assert result[0] == pytest.approx(5.0, 1.0e-6)
+    assert result[1] == pytest.approx(4.0, 1.0e-6)
+    assert result[2] == pytest.approx(3.0, 1.0e-6)
+    assert result[3] == pytest.approx(2.0, 1.0e-6)
+    assert result[4] == pytest.approx(1.0, 1.0e-6)
+    assert result[5] == pytest.approx(0.0, 1.0e-6)
