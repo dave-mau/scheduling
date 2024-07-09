@@ -57,5 +57,5 @@ class TimeProvider:
 
 
 def as_age(stamp: Time, now: Time):
-    assert stamp < now, "Stamp must be in the past."
+    assert stamp <= now, "Stamp must be in the past."
     return now - stamp
