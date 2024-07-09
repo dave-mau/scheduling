@@ -1,3 +1,4 @@
+from .compute_node import ComputeNode
 from .node import Node, Visitor
 from .output_node import OutputNode
 from .ring_buffer_node import RingBufferNode
