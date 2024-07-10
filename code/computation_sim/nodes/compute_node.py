@@ -49,6 +49,9 @@ class ComputeNode(Node):
         self._is_busy = False
 
     def trigger(self):
+        if self.is_busy:
+            return
+
         filt_inputs = self._filter_inputs(self._input_messages)
         self._result = self._compute_result(filt_inputs)
         if self._result:

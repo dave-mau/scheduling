@@ -13,5 +13,8 @@
     "black-formatter.args": [],
     "black-formatter.interpreter": [
         "python3"
+    ],
+    "python.experiments.optOutFrom": [
+        "pythonTestAdapter"
     ]
 }
