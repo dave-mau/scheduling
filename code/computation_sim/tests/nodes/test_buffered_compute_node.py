@@ -1,13 +1,13 @@
-import pytest
 from unittest.mock import Mock
 
-from computation_sim.nodes import Node, BufferedComputeNode
+import pytest
 from computation_sim.basic_types import (
     BadNodeGraphError,
-    Message,
-    Header,
     CommunicationError,
+    Header,
+    Message,
 )
+from computation_sim.nodes import BufferedComputeNode, Node
 
 
 @pytest.fixture
