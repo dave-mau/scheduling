@@ -1,3 +1,4 @@
+from .buffered_compute_node import BufferedComputeNode
 from .filtering_miso_node import FilteringMISONode
 from .interfaces import Node, NodeVisitor, Sensor
 from .output_node import OutputNode

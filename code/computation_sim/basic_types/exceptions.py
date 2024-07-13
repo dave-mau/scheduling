@@ -4,3 +4,7 @@ class ComputationSimError(Exception):
 
 class CommunicationError(ComputationSimError):
     pass
+
+
+class BadNodeGraphError(ComputationSimError):
+    pass
