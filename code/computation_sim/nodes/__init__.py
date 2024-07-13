@@ -1,5 +1,5 @@
-from .compute_node import ComputeNode
-from .node import Node, Visitor
+from .filtering_miso_node import FilteringMISONode
+from .interfaces import Node, NodeVisitor, Sensor
 from .output_node import OutputNode
 from .ring_buffer_node import RingBufferNode
 from .sink_node import SinkNode

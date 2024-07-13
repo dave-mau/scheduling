@@ -1,4 +1,4 @@
-from .node import Node
+from .interfaces import Node
 from computation_sim.basic_types import Message, NodeId, Time
 from computation_sim.time import TimeProvider
 from typing import List

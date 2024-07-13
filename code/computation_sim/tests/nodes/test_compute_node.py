@@ -1,4 +1,4 @@
-from computation_sim.nodes import ComputeNode
+from computation_sim.nodes import FilteringMISONode
 from computation_sim.basic_types import Time, NodeId, Message, Header
 import pytest
 from unittest.mock import Mock, MagicMock
@@ -12,7 +12,7 @@ def setup_empty():
     sampler_mock.sample.return_value = 5
     recv_pass_mock = Mock()
     recv_fail_mock = Mock()
-    node = ComputeNode(clock_mock, sampler_mock)
+    node = FilteringMISONode(clock_mock, sampler_mock)
     return node, clock_mock, sampler_mock, recv_pass_mock, recv_fail_mock
 
 
@@ -76,7 +76,9 @@ def test_empty_inputs(request, fixture):
 
 
 def test_single_input_single_trigger(setup_empty_with_outputs):
-    node, clock_mock, sampler_mock, recv_pass_mock, recv_fail_mock = setup_empty_with_outputs
+    node, clock_mock, sampler_mock, recv_pass_mock, recv_fail_mock = (
+        setup_empty_with_outputs
+    )
 
     msg = Message(Header())
     msg.header.t_measure_average = 500
@@ -126,7 +128,9 @@ def test_single_input_single_trigger(setup_empty_with_outputs):
 
 
 def test_no_duplicate_trigger(setup_empty_with_outputs):
-    node, clock_mock, sampler_mock, recv_pass_mock, recv_fail_mock = setup_empty_with_outputs
+    node, clock_mock, sampler_mock, recv_pass_mock, recv_fail_mock = (
+        setup_empty_with_outputs
+    )
 
     msg = Message(Header())
     msg.header.t_measure_average = 500
@@ -156,7 +160,9 @@ def test_no_duplicate_trigger(setup_empty_with_outputs):
 
 
 def test_multiple_inputs_all_accepted(setup_empty_with_outputs):
-    node, clock_mock, sampler_mock, recv_pass_mock, recv_fail_mock = setup_empty_with_outputs
+    node, clock_mock, sampler_mock, recv_pass_mock, recv_fail_mock = (
+        setup_empty_with_outputs
+    )
     msg = Message(Header())
     msg.header.t_measure_average = 500
     msg.header.t_measure_youngest = 600
@@ -186,7 +192,9 @@ def test_multiple_inputs_all_accepted(setup_empty_with_outputs):
 
 
 def test_multiple_inputs_some_rejected(setup_empty_with_outputs):
-    node, clock_mock, sampler_mock, recv_pass_mock, recv_fail_mock = setup_empty_with_outputs
+    node, clock_mock, sampler_mock, recv_pass_mock, recv_fail_mock = (
+        setup_empty_with_outputs
+    )
     msg = Message(Header())
     msg.header.t_measure_average = 500
     msg.header.t_measure_youngest = 600
@@ -226,7 +234,9 @@ def test_multiple_inputs_some_rejected(setup_empty_with_outputs):
 
 
 def test_multiple_inputs_all_rejected(setup_empty_with_outputs):
-    node, clock_mock, sampler_mock, recv_pass_mock, recv_fail_mock = setup_empty_with_outputs
+    node, clock_mock, sampler_mock, recv_pass_mock, recv_fail_mock = (
+        setup_empty_with_outputs
+    )
 
     msg = Message(Header())
     msg.header.t_measure_average = 500

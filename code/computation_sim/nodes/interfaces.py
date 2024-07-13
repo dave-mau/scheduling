@@ -1,14 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import List, Dict
+from typing import List, Optional
 from uuid import uuid4
 from computation_sim.basic_types import Message, NodeId, Time
 from computation_sim.time import TimeProvider
-
-
-class Visitor:
-    @abstractmethod
-    def visit_node(self, node: "Node"):
-        pass
 
 
 class Node(ABC):
@@ -47,14 +41,45 @@ class Node(ABC):
         pass
 
     # TODO: Add "trigger"
-
     # @abstractmethod
     # def draw(self, draw_context: DrawContext):
     #    pass
 
-    def visit(self, visitor: Visitor):
+    def visit(self, visitor: "NodeVisitor"):
         visitor.visit_node(self)
 
     @abstractmethod
     def reset(self):
         pass
+
+
+class NodeVisitor(ABC):
+    @abstractmethod
+    def visit_node(self, node: "Node"):
+        pass
+
+
+class Sensor(ABC):
+    def __init__(self):
+        self._last_update_time: Optional[Time] = None
+        self._has_measurement = False
+
+    @property
+    @abstractmethod
+    def state(self) -> List[float]:
+        pass
+
+    @property
+    def has_measurement(self) -> bool:
+        return self._has_measurement
+
+    @abstractmethod
+    def get_measurement(self) -> Optional[Message]:
+        pass
+
+    def update(self, time: Time):
+        self._last_update_time = time
+
+    def reset(self) -> None:
+        self._last_update_time = None
+        self._has_measurement = False

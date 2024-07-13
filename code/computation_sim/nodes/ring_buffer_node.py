@@ -1,4 +1,4 @@
-from .node import Node
+from .interfaces import Node
 from .utils import header_to_state
 from computation_sim.time import TimeProvider
 from computation_sim.basic_types import Message, NodeId, Time
