@@ -33,6 +33,11 @@ class BufferedComputeNode(Node):
 
     def set_buffer_for_sender(self, input_id: NodeId, buffer: Node):
         if self._compute not in buffer.outputs:
+            # The node interface does not allow us to add an output to Nodes.
+            # We could specify a buffer interface, but this would impose constraints on
+            # how outputs can be added to a buffer. We thus leave responsibility for
+            # adding the compute node as buffer output to users and raise an error
+            # to make users aware of this possible pitfall.
             raise BadNodeGraphError(
                 f"Cannot add buffer {buffer.id}, because the compute node ({self._compute.id}) is not one of its outputs."
             )
@@ -47,7 +52,9 @@ class BufferedComputeNode(Node):
 
     @property
     def state(self) -> List[float]:
-        buf_states = chain.from_iterable(buffer.state for buffer in self._input_buffers.values())
+        buf_states = chain.from_iterable(
+            buffer.state for buffer in self._input_buffers.values()
+        )
         return list(buf_states) + self._compute.state
 
     def update(self):
