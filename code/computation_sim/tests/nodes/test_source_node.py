@@ -4,7 +4,7 @@ import pytest
 from computation_sim.basic_types import CommunicationError, Header, Message
 from computation_sim.nodes import Node
 from computation_sim.nodes import source_node as sn
-from computation_sim.time import DurationSampler, TimeProvider
+from computation_sim.time import TimeProvider
 
 
 @pytest.fixture

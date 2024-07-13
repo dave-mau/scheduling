@@ -1,8 +1,7 @@
 from unittest.mock import Mock
 
 import pytest
-from environment import (Buffer, MessageLossCounter, ProcessingNode,
-                         ProcessingState)
+from environment import Buffer, MessageLossCounter, ProcessingNode, ProcessingState
 
 
 @pytest.fixture

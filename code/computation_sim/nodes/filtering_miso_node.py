@@ -62,6 +62,7 @@ class FilteringMISONode(Node):
         self._input_messages.clear()
 
     def reset(self):
+        self._input_messages.clear()
         self._is_busy = False
         self._t_start: Time = self.time
         self._duration: Time = self.time

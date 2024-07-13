@@ -1,7 +1,7 @@
 from collections import deque
 from typing import Callable, List, Optional
 
-from computation_sim.basic_types import Message, NodeId, Time
+from computation_sim.basic_types import Message, NodeId
 from computation_sim.time import TimeProvider
 
 from .interfaces import Node

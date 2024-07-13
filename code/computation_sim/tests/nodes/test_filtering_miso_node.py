@@ -1,7 +1,7 @@
-from unittest.mock import MagicMock, Mock
+from unittest.mock import Mock
 
 import pytest
-from computation_sim.basic_types import Header, Message, NodeId, Time
+from computation_sim.basic_types import Header, Message
 from computation_sim.nodes import FilteringMISONode
 
 
