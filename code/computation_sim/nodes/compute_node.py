@@ -101,16 +101,10 @@ class ComputeNode(Node):
 
         result = Message(Header())
         result.header.t_measure_oldest = min(i.header.t_measure_oldest for i in inputs)
-        result.header.t_measure_youngest = max(
-            i.header.t_measure_youngest for i in inputs
-        )
+        result.header.t_measure_youngest = max(i.header.t_measure_youngest for i in inputs)
         result.header.num_measurements = sum(i.header.num_measurements for i in inputs)
-        weighted_sum = sum(
-            i.header.num_measurements * i.header.t_measure_average for i in inputs
-        )
-        result.header.t_measure_average = round(
-            weighted_sum / result.header.num_measurements
-        )
+        weighted_sum = sum(i.header.num_measurements * i.header.t_measure_average for i in inputs)
+        result.header.t_measure_average = round(weighted_sum / result.header.num_measurements)
         return result
 
     def _set_task_timer(self):
