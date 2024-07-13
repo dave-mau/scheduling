@@ -1,7 +1,8 @@
-from computation_sim.nodes import ComputeNode
-from computation_sim.basic_types import Time, NodeId, Message, Header
+from unittest.mock import Mock
+
 import pytest
-from unittest.mock import Mock, MagicMock
+from computation_sim.basic_types import Header, Message
+from computation_sim.nodes import FilteringMISONode
 
 
 @pytest.fixture
@@ -12,7 +13,7 @@ def setup_empty():
     sampler_mock.sample.return_value = 5
     recv_pass_mock = Mock()
     recv_fail_mock = Mock()
-    node = ComputeNode(clock_mock, sampler_mock)
+    node = FilteringMISONode(clock_mock, sampler_mock)
     return node, clock_mock, sampler_mock, recv_pass_mock, recv_fail_mock
 
 

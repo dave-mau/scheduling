@@ -1,6 +1,7 @@
-from environment import InputNode, Clock, Buffer
-from unittest.mock import Mock, MagicMock
+from unittest.mock import MagicMock, Mock
+
 import pytest
+from environment import Buffer, Clock, InputNode
 
 
 @pytest.fixture

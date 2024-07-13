@@ -1,7 +1,8 @@
-import pytest
-from unittest.mock import Mock
-from environment import Simulator, Clock
 from itertools import chain
+from unittest.mock import Mock
+
+import pytest
+from environment import Clock, Simulator
 
 
 @pytest.fixture

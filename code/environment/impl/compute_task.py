@@ -1,11 +1,12 @@
-from .clock import TimeProvider, TimeMs
-from .time_samplers import ExecutionTimeSampler
-from typing import List
-from .messaging import Message
 from abc import ABC, abstractmethod
 from collections import namedtuple
-from typing import Tuple
+from typing import List, Tuple
+
 import numpy as np
+
+from .clock import TimeMs, TimeProvider
+from .messaging import Message
+from .time_samplers import ExecutionTimeSampler
 
 ComputeTaskInfo = namedtuple("ComputeTaskInfo", ["num_inputs", "num_rejected_inputs"])
 

@@ -1,7 +1,7 @@
+from unittest.mock import MagicMock
+
 import pytest
-from unittest.mock import MagicMock
-from environment import Message, Buffer, MessageLossCounter
-from unittest.mock import MagicMock
+from environment import Buffer, Message, MessageLossCounter
 
 
 @pytest.fixture

@@ -1,7 +1,9 @@
-from .node import Node
+from typing import List
+
 from computation_sim.basic_types import Message, NodeId, Time
 from computation_sim.time import TimeProvider
-from typing import List
+
+from .interfaces import Node
 
 
 class SinkNode(Node):

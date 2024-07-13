@@ -1,4 +1,4 @@
-from numpy import uint64, round
+from numpy import round, uint64
 
 TimeMs = uint64
 

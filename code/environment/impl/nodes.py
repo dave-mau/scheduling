@@ -1,11 +1,12 @@
+import uuid
+from enum import Enum
+from typing import List, Tuple
+
 from .clock import TimeMs, TimeProvider, round_to_milliseconds
-from .messaging import Buffer, Message
-from .time_samplers import ExecutionTimeSampler
 from .compute_task import ComputeTask, ComputeTaskInfo
 from .message_loss_counter import MessageLossCounter
-from typing import List, Tuple
-from enum import Enum
-import uuid
+from .messaging import Buffer, Message
+from .time_samplers import ExecutionTimeSampler
 
 
 class Node:

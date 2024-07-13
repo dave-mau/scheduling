@@ -1,6 +1,6 @@
-from computation_sim.nodes import header_to_state
-from computation_sim.basic_types import Header
 import pytest
+from computation_sim.basic_types import Header
+from computation_sim.nodes import header_to_state
 
 
 def test_header_to_state_pass():

@@ -1,7 +1,8 @@
-import pytest
 from unittest.mock import Mock
-from computation_sim.time import DurationSampler
+
 import computation_sim.nodes as sn
+import pytest
+from computation_sim.time import DurationSampler
 
 
 @pytest.fixture

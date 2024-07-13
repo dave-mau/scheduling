@@ -1,6 +1,7 @@
-from collections import deque, namedtuple
-import numpy as np
 import random
+from collections import deque, namedtuple
+
+import numpy as np
 import torch
 
 Sample = namedtuple("Sample", ("s", "a", "s_prime", "r"))

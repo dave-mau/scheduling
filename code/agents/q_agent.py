@@ -1,11 +1,12 @@
-from .q_network import DQN
-from .buffer import Memory, Sample
-import torch
-from torch import optim
-from torch import nn
-from math import exp
 import random
+from math import exp
+
+import torch
 from gymnasium.spaces import Space
+from torch import nn, optim
+
+from .buffer import Memory, Sample
+from .q_network import DQN
 
 
 class DQNActor(object):

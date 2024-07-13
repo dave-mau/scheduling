@@ -1,13 +1,14 @@
-from .nodes import InputNode, ProcessingNode
-
-from .clock import TimeProvider, TimeMs
-from .simulator import Simulator
-from .message_loss_counter import MessageLossCounter
-from typing import List
-import numpy as np
-import networkx as nx
-import graphviz
 from abc import ABC
+from typing import List
+
+import graphviz
+import networkx as nx
+import numpy as np
+
+from .clock import TimeMs, TimeProvider
+from .message_loss_counter import MessageLossCounter
+from .nodes import InputNode, ProcessingNode
+from .simulator import Simulator
 
 
 class StateVector:
@@ -64,7 +65,11 @@ class ConnectionNextNodeMissingError(ValueError):
 
 
 class System(object):
-    def __init__(self, time_provider: TimeProvider, message_loss_counter: MessageLossCounter = None):
+    def __init__(
+        self,
+        time_provider: TimeProvider,
+        message_loss_counter: MessageLossCounter = None,
+    ):
         self._time_provider = time_provider
         self._input_nodes: List[InputNode] = []
         self._action_nodes: List[ProcessingNode] = []
@@ -130,14 +135,23 @@ class System(object):
             if action[action_idx] == 1:
                 node.trigger_compute()
 
-    def add_processing_node(self, node: ProcessingNode, next_node_id: str, is_state_node=True, is_action_node=True):
+    def add_processing_node(
+        self,
+        node: ProcessingNode,
+        next_node_id: str,
+        is_state_node=True,
+        is_action_node=True,
+    ):
         if node.id in self._graph.nodes:
             raise DuplicateNodeError(node.id)
         if next_node_id and (not next_node_id in self._graph.nodes):
             raise ConnectionNextNodeMissingError(node.id, next_node_id)
 
         self._graph.add_node(
-            node.id, proc_node_object=node, is_state_node=is_state_node, is_action_node=is_action_node
+            node.id,
+            proc_node_object=node,
+            is_state_node=is_state_node,
+            is_action_node=is_action_node,
         )
         if next_node_id:
             self._graph.add_edge(node.id, next_node_id)
@@ -200,7 +214,13 @@ class System(object):
     def to_plot_graph(self) -> graphviz.Digraph:
         G = graphviz.Digraph()
         for node in self._input_nodes:
-            G.node(node.id, label=node.id, shape="cylinder", fillcolor="white", style="filled")
+            G.node(
+                node.id,
+                label=node.id,
+                shape="cylinder",
+                fillcolor="white",
+                style="filled",
+            )
             G.node(
                 node.output.id,
                 label=node.output.id,
@@ -216,7 +236,7 @@ class System(object):
                 node.id,
                 label=node.id,
                 shape="square",
-                color="magenta" if self._graph.nodes(data=True)[node.id].get("is_action_node") else "black",
+                color=("magenta" if self._graph.nodes(data=True)[node.id].get("is_action_node") else "black"),
                 penwidth="4.0",
                 fillcolor="red" if node.compute_task.is_running else "green",
                 style="filled",

@@ -1,5 +1,5 @@
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def plot_gamma_histogram(shape, scale, num_samples=10000, num_bins=50):

@@ -1,17 +1,17 @@
 from environment import (
+    Buffer,
+    Clock,
+    CostConfig,
     ExecutionTimeSampler,
     GammaDistributionSampler,
     GaussianTimeSampler,
-    ProcessingNode,
-    MISOFusionTask,
-    SISOComputeTask,
-    Buffer,
     InputNode,
-    TimeProvider,
-    Clock,
-    SystemBuilder,
-    CostConfig,
+    MISOFusionTask,
+    ProcessingNode,
+    SISOComputeTask,
     System,
+    SystemBuilder,
+    TimeProvider,
 )
 
 
@@ -34,7 +34,11 @@ class ThreeStageSystemBuilder(SystemBuilder):
         self._local_idx += 1
         self._input_idx = 0
         compute_task = MISOFusionTask(self._time_provider, sampler, rejection_threshold)
-        node = ProcessingNode(compute_task, f"LOCAL_{self._local_idx}", Buffer(id=f"LOCAL_{self._local_idx}_OUT"))
+        node = ProcessingNode(
+            compute_task,
+            f"LOCAL_{self._local_idx}",
+            Buffer(id=f"LOCAL_{self._local_idx}_OUT"),
+        )
         self._system.add_processing_node(node, "GLOBAL", is_state_node=True, is_action_node=True)
 
     def add_input_module(
@@ -55,7 +59,10 @@ class ThreeStageSystemBuilder(SystemBuilder):
             Buffer(id=f"INPUT_PROC_{self._local_idx}{self._input_idx}_OUT"),
         )
         self.system.add_processing_node(
-            input_proc_node, f"LOCAL_{self._local_idx}", is_state_node=True, is_action_node=False
+            input_proc_node,
+            f"LOCAL_{self._local_idx}",
+            is_state_node=True,
+            is_action_node=False,
         )
 
         # Create an input that automatically triggers the worker
@@ -68,7 +75,9 @@ class ThreeStageSystemBuilder(SystemBuilder):
             Buffer(id=f"INPUT_SENS_{self._local_idx}{self._input_idx}_OUT"),
         )
         self.system.add_input_node(
-            input_sens_node, f"INPUT_PROC_{self._local_idx}{self._input_idx}", trigger_next_compute=True
+            input_sens_node,
+            f"INPUT_PROC_{self._local_idx}{self._input_idx}",
+            trigger_next_compute=True,
         )
         self._input_idx += 1
 
@@ -94,7 +103,10 @@ class ThreeStageSystemDirector(object):
             builder.add_local_node(local_sampler, tau_input)
             for j in range(num_input_per_local):
                 builder.add_input_module(
-                    input_proc_sampler, input_sens_sampler, t0_input=t0_input, tau_input=tau_input
+                    input_proc_sampler,
+                    input_sens_sampler,
+                    t0_input=t0_input,
+                    tau_input=tau_input,
                 )
         builder.system.compile()
         return builder.system

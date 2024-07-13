@@ -1,7 +1,8 @@
-from computation_sim.nodes import SinkNode
-from computation_sim.basic_types import Message, Header
-import pytest
 from unittest.mock import Mock
+
+import pytest
+from computation_sim.basic_types import Header, Message
+from computation_sim.nodes import SinkNode
 
 
 def test_receive_some():

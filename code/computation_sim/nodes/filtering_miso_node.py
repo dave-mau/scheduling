@@ -1,12 +1,14 @@
-from .node import Node
-from computation_sim.time import TimeProvider, DurationSampler, as_age
-from computation_sim.basic_types import Time, NodeId, Message, Header
 from copy import deepcopy
 from typing import List, Optional
+
 import numpy as np
+from computation_sim.basic_types import Header, Message, NodeId, Time
+from computation_sim.time import DurationSampler, TimeProvider, as_age
+
+from .interfaces import Node
 
 
-class ComputeNode(Node):
+class FilteringMISONode(Node):
     def __init__(
         self,
         time_provider: TimeProvider,
@@ -60,6 +62,7 @@ class ComputeNode(Node):
         self._input_messages.clear()
 
     def reset(self):
+        self._input_messages.clear()
         self._is_busy = False
         self._t_start: Time = self.time
         self._duration: Time = self.time

@@ -1,5 +1,6 @@
-from .buffer import Sample, Memory
 import pytest
+
+from .buffer import Memory, Sample
 
 
 @pytest.fixture

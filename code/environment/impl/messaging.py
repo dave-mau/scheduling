@@ -1,8 +1,9 @@
+import uuid
+from collections import namedtuple
 from copy import deepcopy
 from typing import Callable
-from collections import namedtuple
+
 from .message_loss_counter import MessageLossCounter
-import uuid
 
 Message = namedtuple("Message", ["min_time", "avg_time", "max_time"])
 
