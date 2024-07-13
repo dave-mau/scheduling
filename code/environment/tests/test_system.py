@@ -4,14 +4,9 @@ from unittest.mock import MagicMock, Mock
 
 import numpy as np
 import pytest
-from environment import (
-    BadSystemArchitectureError,
-    ConnectionNextNodeMissingError,
-    DuplicateNodeError,
-    Message,
-    StateVector,
-    System,
-)
+from environment import (BadSystemArchitectureError,
+                         ConnectionNextNodeMissingError, DuplicateNodeError,
+                         Message, StateVector, System)
 
 
 def make_mock_node(id: str):

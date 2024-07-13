@@ -2,7 +2,8 @@ from typing import Tuple
 from unittest.mock import Mock
 
 import pytest
-from environment import Clock, ComputeTask, ComputeTaskInfo, FixedTime, Message, MISOFusionTask, SISOComputeTask
+from environment import (Clock, ComputeTask, ComputeTaskInfo, FixedTime,
+                         Message, MISOFusionTask, SISOComputeTask)
 
 
 class DummyComputeTask(ComputeTask):

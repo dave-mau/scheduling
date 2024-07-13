@@ -1,10 +1,6 @@
 from typing import List
 
-from computation_sim.basic_types import (
-    Header,
-    Message,
-    Time,
-)
+from computation_sim.basic_types import Header, Message, Time
 from computation_sim.time import DurationSampler
 
 from .interfaces import Sensor

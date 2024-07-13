@@ -25,4 +25,5 @@ dependencies:
   - python-graphviz
   - black
   - pytest
+  - isort
 prefix: /home/davidmauderli/.conda/envs/timesync-prototype

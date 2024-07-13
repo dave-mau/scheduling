@@ -11,6 +11,7 @@ RUN python3 -m pip install \
     graphviz \
     gymnasium \
     imageio \
+    isort \
     matplotlib \
     networkx \
     numpy \
@@ -18,7 +19,7 @@ RUN python3 -m pip install \
     pytest \
     scipy \
     sympy \
-    tqdm
+    tqdm 
 
 # Add ci-user
 RUN useradd -ms /bin/bash ci

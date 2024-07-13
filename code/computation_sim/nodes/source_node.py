@@ -1,11 +1,7 @@
 from copy import deepcopy
 from typing import List
 
-from computation_sim.basic_types import (
-    CommunicationError,
-    Message,
-    NodeId,
-)
+from computation_sim.basic_types import CommunicationError, Message, NodeId
 from computation_sim.time import TimeProvider
 
 from .interfaces import Node, Sensor
