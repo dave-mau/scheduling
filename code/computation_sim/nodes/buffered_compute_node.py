@@ -52,9 +52,7 @@ class BufferedComputeNode(Node):
 
     @property
     def state(self) -> List[float]:
-        buf_states = chain.from_iterable(
-            buffer.state for buffer in self._input_buffers.values()
-        )
+        buf_states = chain.from_iterable(buffer.state for buffer in self._input_buffers.values())
         return list(buf_states) + self._compute.state
 
     def update(self):
