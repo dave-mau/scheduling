@@ -1,5 +1,5 @@
-from computation_sim.time import Clock
 import pytest
+from computation_sim.time import Clock
 
 
 @pytest.fixture

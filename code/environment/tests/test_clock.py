@@ -1,5 +1,5 @@
-from environment import Clock, TimeProvider, TimeMs
 import pytest
+from environment import Clock, TimeMs, TimeProvider
 
 
 @pytest.fixture

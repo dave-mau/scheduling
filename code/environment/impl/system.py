@@ -1,13 +1,14 @@
-from .nodes import InputNode, ProcessingNode
-
-from .clock import TimeProvider, TimeMs
-from .simulator import Simulator
-from .message_loss_counter import MessageLossCounter
-from typing import List
-import numpy as np
-import networkx as nx
-import graphviz
 from abc import ABC
+from typing import List
+
+import graphviz
+import networkx as nx
+import numpy as np
+
+from .clock import TimeMs, TimeProvider
+from .message_loss_counter import MessageLossCounter
+from .nodes import InputNode, ProcessingNode
+from .simulator import Simulator
 
 
 class StateVector:

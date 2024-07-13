@@ -1,18 +1,7 @@
-from environment import (
-    ExecutionTimeSampler,
-    GammaDistributionSampler,
-    GaussianTimeSampler,
-    ProcessingNode,
-    MISOFusionTask,
-    SISOComputeTask,
-    Buffer,
-    InputNode,
-    TimeProvider,
-    Clock,
-    SystemBuilder,
-    CostConfig,
-    System,
-)
+from environment import (Buffer, Clock, CostConfig, ExecutionTimeSampler,
+                         GammaDistributionSampler, GaussianTimeSampler,
+                         InputNode, MISOFusionTask, ProcessingNode,
+                         SISOComputeTask, System, SystemBuilder, TimeProvider)
 
 
 class ThreeStageSystemBuilder(SystemBuilder):

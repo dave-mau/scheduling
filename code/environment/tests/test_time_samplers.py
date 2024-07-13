@@ -1,6 +1,6 @@
-import pytest
-from environment import GaussianTimeSampler, GammaDistributionSampler, TimeMs
 import numpy as np
+import pytest
+from environment import GammaDistributionSampler, GaussianTimeSampler, TimeMs
 
 
 @pytest.fixture

@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 from uuid import uuid4
+
 from computation_sim.basic_types import Message, NodeId, Time
 from computation_sim.time import TimeProvider
 

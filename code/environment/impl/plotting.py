@@ -1,9 +1,11 @@
-from .system import System, StateVector
-from .clock import TimeMs
+import tempfile
 from itertools import chain
 from pathlib import Path
+
 import numpy as np
-import tempfile
+
+from .clock import TimeMs
+from .system import StateVector, System
 
 
 def draw_system(system: System, **kwargs) -> object:

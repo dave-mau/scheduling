@@ -1,6 +1,8 @@
-import numpy as np
 from abc import ABC, abstractmethod
+
+import numpy as np
 from computation_sim.basic_types import Time
+
 from .clock import round_to_fixed_point
 
 

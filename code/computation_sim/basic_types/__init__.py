@@ -1,3 +1,3 @@
-from .message import Message, Header
+from .exceptions import CommunicationError, ComputationSimError
+from .message import Header, Message
 from .types import NodeId, Time
-from .exceptions import ComputationSimError, CommunicationError

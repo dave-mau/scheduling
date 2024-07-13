@@ -1,9 +1,11 @@
+from collections import deque
+from typing import Callable, List, Optional
+
+from computation_sim.basic_types import Message, NodeId, Time
+from computation_sim.time import TimeProvider
+
 from .interfaces import Node
 from .utils import header_to_state
-from computation_sim.time import TimeProvider
-from computation_sim.basic_types import Message, NodeId, Time
-from typing import List, Callable, Optional
-from collections import deque
 
 
 class RingBufferNode(Node):

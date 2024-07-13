@@ -1,6 +1,7 @@
+from typing import Tuple
+
 from computation_sim.basic_types import Header, Time
 from computation_sim.time import as_age
-from typing import Tuple
 
 
 def header_to_state(header: Header, now: Time) -> Tuple[float, float, float]:

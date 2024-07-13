@@ -1,5 +1,6 @@
-from .clock import Clock, TimeMs
 from itertools import chain
+
+from .clock import Clock, TimeMs
 
 
 class Simulator:

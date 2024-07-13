@@ -1,9 +1,11 @@
+from copy import deepcopy
+from typing import Callable, List, Optional
+
+from computation_sim.basic_types import Message, NodeId
+from computation_sim.time import TimeProvider
+
 from .interfaces import Node
 from .utils import header_to_state
-from computation_sim.time import TimeProvider
-from computation_sim.basic_types import Message, NodeId
-from typing import List, Callable, Optional
-from copy import deepcopy
 
 
 class OutputNode(Node):

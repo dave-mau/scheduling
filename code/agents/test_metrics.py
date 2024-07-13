@@ -1,5 +1,6 @@
 import pytest
-from .metrics import MovingTotal, MovingAverage
+
+from .metrics import MovingAverage, MovingTotal
 
 
 @pytest.fixture

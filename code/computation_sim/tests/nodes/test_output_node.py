@@ -1,7 +1,8 @@
-from computation_sim.nodes import OutputNode
-from computation_sim.basic_types import Message, Header
-from unittest.mock import Mock, MagicMock
+from unittest.mock import MagicMock, Mock
+
 import pytest
+from computation_sim.basic_types import Header, Message
+from computation_sim.nodes import OutputNode
 
 
 def test_receive_copies():

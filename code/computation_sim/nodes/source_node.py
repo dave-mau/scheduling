@@ -1,20 +1,15 @@
-from computation_sim.basic_types import (
-    NodeId,
-    Message,
-    CommunicationError,
-    Time,
-    Header,
-)
-from computation_sim.time import DurationSampler, TimeProvider
-from .interfaces import Node, Sensor
-from typing import List
 from copy import deepcopy
+from typing import List
+
+from computation_sim.basic_types import (CommunicationError, Header, Message,
+                                         NodeId, Time)
+from computation_sim.time import DurationSampler, TimeProvider
+
+from .interfaces import Node, Sensor
 
 
 class PeriodicEpochSensor(Sensor):
-    def __init__(
-        self, epoch: Time, period: Time, disturbance: DurationSampler, **kwargs
-    ):
+    def __init__(self, epoch: Time, period: Time, disturbance: DurationSampler, **kwargs):
         super().__init__(**kwargs)
         self._epoch = epoch
         self._period = period
@@ -38,9 +33,7 @@ class PeriodicEpochSensor(Sensor):
         if time >= self._actual_send_time:
             self._nominal_send_time += self._period
             while self._actual_send_time <= time:
-                self._actual_send_time = (
-                    self._nominal_send_time + self._disturbance.sample()
-                )
+                self._actual_send_time = self._nominal_send_time + self._disturbance.sample()
             self._has_measurement = True
             return
         self._has_measurement = False
@@ -51,9 +44,7 @@ class PeriodicEpochSensor(Sensor):
         self._actual_send_time = self._nominal_send_time
 
     def _get_header(self) -> Header:
-        header = Header(
-            self._last_update_time, self._last_update_time, self._last_update_time
-        )
+        header = Header(self._last_update_time, self._last_update_time, self._last_update_time)
         return header
 
     def _get_data(self) -> object:
@@ -86,9 +77,7 @@ class SourceNode(Node):
 
     def add_output(self, output: Node) -> None:
         if output in self.outputs:
-            raise ValueError(
-                f"The node with id {output.id} cannot be added twice as output."
-            )
+            raise ValueError(f"The node with id {output.id} cannot be added twice as output.")
         self._outputs.append(output)
 
     def _send(self, message: Message):

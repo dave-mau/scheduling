@@ -1,16 +1,12 @@
-import pytest
-import numpy as np
-from unittest.mock import Mock, MagicMock
-from environment import (
-    System,
-    StateVector,
-    BadSystemArchitectureError,
-    DuplicateNodeError,
-    ConnectionNextNodeMissingError,
-    Message,
-)
 from collections import namedtuple
 from typing import Tuple
+from unittest.mock import MagicMock, Mock
+
+import numpy as np
+import pytest
+from environment import (BadSystemArchitectureError,
+                         ConnectionNextNodeMissingError, DuplicateNodeError,
+                         Message, StateVector, System)
 
 
 def make_mock_node(id: str):
