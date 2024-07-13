@@ -16,7 +16,7 @@ class ComputeNode(Node):
     ):
         super().__init__(time_provider, id)
         self._duration_sampler = duration_sampler
-        self._filter_threshold = filter_threshold
+        self.filter_threshold = filter_threshold
         self._input_messages = []
         self._output_pass: Node = None
         self._output_fail: Node = None
@@ -83,12 +83,12 @@ class ComputeNode(Node):
             return []
 
         # Filter elements that are too old
-        youngest_time = min(i.header.t_measure_youngest for i in valid_inputs)
+        youngest_time = max(i.header.t_measure_youngest for i in valid_inputs)
 
         accepted_inputs = []
         for input in valid_inputs:
             if (self._output_fail is not None) and (
-                input.header.t_measure_youngest + self._filter_threshold < youngest_time
+                input.header.t_measure_oldest + self.filter_threshold < youngest_time
             ):
                 self._output_fail.receive(input)
             else:
@@ -108,7 +108,9 @@ class ComputeNode(Node):
         weighted_sum = sum(
             i.header.num_measurements * i.header.t_measure_average for i in inputs
         )
-        result.header.t_measure_average = weighted_sum / result.header.num_measurements
+        result.header.t_measure_average = round(
+            weighted_sum / result.header.num_measurements
+        )
         return result
 
     def _set_task_timer(self):
