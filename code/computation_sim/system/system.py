@@ -22,6 +22,13 @@ class System:
     def num_action(self) -> int:
         return len(self._actions)
 
+    @property
+    def state(self) -> List[float]:
+        state = []
+        for node in self._update_list:
+            state.extend(node.state)
+        return state
+
     def add_node(self, node: Node) -> None:
         self._node_graph.add_node(node)
         for output in node.outputs:
@@ -51,5 +58,5 @@ class System:
     def _compute_update_list(self) -> None:
         if not nx.is_tree(self._node_graph):
             raise BadNodeGraphError("The node graph is invalid, because it does not form a tree.")
-        self._update_list = list(nx.topological_sort(self._node_graph))
+        self._update_list = list(nx.lexicographical_topological_sort(self._node_graph, key=lambda x: x.id))
         self._update_list_set = True
