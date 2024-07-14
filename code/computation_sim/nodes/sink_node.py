@@ -20,7 +20,7 @@ class SinkNode(Node):
     def state(self) -> List[float]:
         return [float(len(self._received_messages))]
 
-    def update(self, time: Time):
+    def update(self):
         self._received_messages.clear()
         self._receive_times.clear()
 

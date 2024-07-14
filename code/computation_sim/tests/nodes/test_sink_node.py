@@ -24,7 +24,7 @@ def test_update_clears_received():
     node = SinkNode(Mock())
     node.receive(Message(Header(), data="foo"))
     node.receive(Message(Header(), data="bar"))
-    node.update(111)
+    node.update()
     assert len(node.state) == 1
     assert node.state[0] == pytest.approx(0.0, 1.0e-6)
 
