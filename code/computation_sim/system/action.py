@@ -21,7 +21,7 @@ class Action(object):
 
     def act(self) -> None:
         for cb in self._callbacks:
-            cb()
+            cb.callback()
 
     def clear(self) -> None:
         self._callbacks.clear()
