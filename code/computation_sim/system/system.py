@@ -16,7 +16,7 @@ class System:
 
     @property
     def num_nodes(self) -> int:
-        return len(self._update_list)
+        return self._node_graph.number_of_nodes()
 
     @property
     def num_action(self) -> int:
@@ -25,7 +25,7 @@ class System:
     def add_node(self, node: Node) -> None:
         self._node_graph.add_node(node)
         for output in node.outputs:
-            self._node_graph.add_edge((node, output))
+            self._node_graph.add_edge(node, output)
         self._update_list_set = False
 
     def add_action(self, action: Action) -> None:
