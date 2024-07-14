@@ -95,9 +95,3 @@ def test_nominal(setup):
         rtol=1.0e-6,
         atol=1.0e-6,
     )
-
-
-# TODO: Receive callback in MISONode
-# TODO: Add state normalizer to Node function
-# TODO: More tests for system (lexicographical sort)
-# TODO: More tests for system (state)
