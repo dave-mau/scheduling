@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional, Iterable
+from typing import List, Optional, Generator
 from uuid import uuid4
 
 from computation_sim.basic_types import Message, NodeId, Time
@@ -28,10 +28,13 @@ class Node(ABC):
     def receive(self, message: Message) -> None:
         pass
 
-    @property
     @abstractmethod
-    def state(self) -> Iterable[float]:
+    def generate_state(self) -> Generator[float, None, None]:
         pass
+
+    @property
+    def state(self) -> List[float]:
+        return list(self.generate_state())
 
     @abstractmethod
     def update(self):
@@ -65,10 +68,13 @@ class Sensor(ABC):
         self._last_update_time: Optional[Time] = None
         self._has_measurement = False
 
-    @property
     @abstractmethod
-    def state(self) -> Iterable[float]:
+    def generate_state(self) -> Generator[float, None, None]:
         pass
+
+    @property
+    def state(self) -> List[float]:
+        return list(self.generate_state())
 
     @property
     def has_measurement(self) -> bool:
