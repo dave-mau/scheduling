@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional, Generator
+from typing import List, Optional, Iterable
 from uuid import uuid4
 
 from computation_sim.basic_types import Message, NodeId, Time
@@ -30,7 +30,7 @@ class Node(ABC):
 
     @property
     @abstractmethod
-    def state(self) -> Generator[float]:
+    def state(self) -> Iterable[float]:
         pass
 
     @abstractmethod
@@ -67,7 +67,7 @@ class Sensor(ABC):
 
     @property
     @abstractmethod
-    def state(self) -> Generator[float]:
+    def state(self) -> Iterable[float]:
         pass
 
     @property
