@@ -1,5 +1,5 @@
 from itertools import chain
-from typing import Dict, List
+from typing import Dict, List, Generator
 
 from computation_sim.basic_types import (
     BadNodeGraphError,
@@ -50,10 +50,10 @@ class BufferedComputeNode(Node):
             )
         self._input_buffers[message.header.sender_id].receive(message)
 
-    @property
-    def state(self) -> List[float]:
-        buf_states = chain.from_iterable(buffer.state for buffer in self._input_buffers.values())
-        return list(buf_states) + self._compute.state
+    def generate_state(self) -> Generator[float, None, None]:
+        for buffer in self._input_buffers.values():
+            yield from buffer.generate_state()
+        yield from self._compute.generate_state()
 
     def update(self):
         for buf in self._input_buffers.values():

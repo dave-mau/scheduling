@@ -74,14 +74,28 @@ def test_receive_fail(compute_node_ok):
         node.receive(Message(header))
 
 
+def generate_state(vals):
+    for val in vals:
+        yield val
+
+
 def test_state(compute_node_ok):
     mocks, node = compute_node_ok
 
-    mocks["mock_buf_0"].state = [1, 2]
-    mocks["mock_buf_1"].state = [3, 4]
-    mocks["mock_compute"].state = [5, 6]
-    mocks["mock_output"].state = [7, 8]
+    mocks["mock_buf_0"].generate_state = lambda: generate_state((1, 2))
+    mocks["mock_buf_1"].generate_state = lambda: generate_state((3, 4))
+    mocks["mock_compute"].generate_state = lambda: generate_state((5, 6))
+    mocks["mock_output"].generate_state = lambda: generate_state((7, 8))
 
     result = node.state
-
     assert result == [1, 2, 3, 4, 5, 6]
+
+    result_gen = node.generate_state()
+    assert next(result_gen) == 1
+    assert next(result_gen) == 2
+    assert next(result_gen) == 3
+    assert next(result_gen) == 4
+    assert next(result_gen) == 5
+    assert next(result_gen) == 6
+    with pytest.raises(StopIteration):
+        next(result_gen)
