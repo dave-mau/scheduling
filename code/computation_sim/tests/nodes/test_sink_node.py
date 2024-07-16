@@ -2,16 +2,16 @@ from unittest.mock import Mock
 
 import pytest
 from computation_sim.basic_types import Header, Message
-from computation_sim.nodes import SinkNode
+from computation_sim.nodes import SinkNode, ConstantNormalizer
 
 
 def test_receive_some():
-    node = SinkNode(Mock())
+    node = SinkNode(Mock(), state_normalizer=ConstantNormalizer(10.0))
     node.receive(Message(Header(), data="foo"))
     node.receive(Message(Header(), data="bar"))
 
     assert len(node.state) == 1
-    assert node.state[0] == pytest.approx(2.0, 1.0e-6)
+    assert node.state[0] == pytest.approx(0.2, 1.0e-6)
 
 
 def test_receive_none():
