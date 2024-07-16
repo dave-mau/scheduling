@@ -6,7 +6,7 @@ from computation_sim.nodes import SinkNode, ConstantNormalizer
 
 
 def test_receive_some():
-    node = SinkNode(Mock(), state_normalizer=ConstantNormalizer(10.0))
+    node = SinkNode(Mock(), count_normalizer=ConstantNormalizer(10.0))
     node.receive(Message(Header(), data="foo"))
     node.receive(Message(Header(), data="bar"))
 

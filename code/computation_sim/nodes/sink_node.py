@@ -12,13 +12,13 @@ class SinkNode(Node):
         self,
         time_provider: TimeProvider,
         id: NodeId = None,
-        state_normalizer: StateVariableNormalizer = None,
+        count_normalizer: StateVariableNormalizer = None,
     ):
         super().__init__(time_provider, id)
         self._received_messages = []
         self._receive_times = []
         self._state_normalizer = (
-            state_normalizer if state_normalizer else ConstantNormalizer(1.0)
+            count_normalizer if count_normalizer else ConstantNormalizer(1.0)
         )
 
     def receive(self, message: Message) -> None:

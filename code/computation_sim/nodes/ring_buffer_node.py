@@ -4,7 +4,7 @@ from typing import Callable, Generator, Optional
 from computation_sim.basic_types import Message, NodeId
 from computation_sim.time import TimeProvider
 
-from .interfaces import Node
+from .interfaces import Node, StateVariableNormalizer
 from .utils import header_to_state
 from .state_normalizers import ConstantNormalizer
 
@@ -16,8 +16,8 @@ class RingBufferNode(Node):
         id: NodeId = None,
         max_num_elements=1,
         overflow_cb: Callable[[Message], None] = None,
-        age_normalizer=None,
-        occupancy_normalizer=None,
+        age_normalizer: StateVariableNormalizer = None,
+        occupancy_normalizer: StateVariableNormalizer = None,
     ):
         super().__init__(time_provider, id)
         self._buffer = deque(maxlen=max_num_elements)
