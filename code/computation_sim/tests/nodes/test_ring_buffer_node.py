@@ -144,7 +144,7 @@ def test_state_full_default_normalizer(setup_no_callback):
     buffer.receive(Message(Header(1, 2, 3)))
     buffer.receive(Message(Header(4, 5, 6)))
 
-    result = buffer.state
+    result = buffer.generate_state()
     assert next(result) == pytest.approx(1.0, 1.0e-6)
     assert next(result) == pytest.approx(5.0, 1.0e-6)
     assert next(result) == pytest.approx(4.0, 1.0e-6)
@@ -161,7 +161,7 @@ def test_state_empty_default_normalizer(setup_no_callback):
     buffer, clock_mock = setup_no_callback
     clock_mock.time = 6
 
-    result = buffer.state
+    result = buffer.generate_state()
     assert next(result) == pytest.approx(0.0, 1.0e-6)
     assert next(result) == pytest.approx(0.0, 1.0e-6)
     assert next(result) == pytest.approx(0.0, 1.0e-6)
@@ -179,7 +179,7 @@ def test_state_semifull_default_normalizer(setup_no_callback):
     clock_mock.time = 6
     buffer.receive(Message(Header(1, 2, 3)))
 
-    result = buffer.state
+    result = buffer.generate_state()
     assert next(result) == pytest.approx(1.0, 1.0e-6)
     assert next(result) == pytest.approx(5.0, 1.0e-6)
     assert next(result) == pytest.approx(4.0, 1.0e-6)
@@ -205,7 +205,7 @@ def test_state_full_custom_normalizer():
     buffer.receive(Message(Header(1, 2, 3)))
     buffer.receive(Message(Header(4, 5, 6)))
 
-    result = buffer.state
+    result = buffer.generate_state()
     assert next(result) == pytest.approx(0.5, 1.0e-6)
     assert next(result) == pytest.approx(0.5, 1.0e-6)
     assert next(result) == pytest.approx(0.4, 1.0e-6)
@@ -216,3 +216,4 @@ def test_state_full_custom_normalizer():
     assert next(result) == pytest.approx(0.0, 1.0e-6)
     with pytest.raises(StopIteration):
         next(result)
+    assert len(buffer.state) == 8

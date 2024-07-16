@@ -1,5 +1,5 @@
 from collections import deque
-from typing import Callable, Iterable, Optional
+from typing import Callable, Generator, Optional
 
 from computation_sim.basic_types import Message, NodeId
 from computation_sim.time import TimeProvider
@@ -34,8 +34,7 @@ class RingBufferNode(Node):
             self._overflow_cb(self._buffer.popleft())
         self._buffer.append(message)
 
-    @property
-    def state(self) -> Iterable[float]:
+    def generate_state(self) -> Generator[float, None, None]:
         # Write non-empty elements
         for element in self._buffer:
             yield self._occupancy_normalizer.normalize(1.0)
