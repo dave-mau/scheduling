@@ -11,6 +11,18 @@ def setup():
     return sn.PeriodicEpochSensor(4, 10, sampler_mock), sampler_mock
 
 
+def test_state(setup):
+    sensor, _ = setup
+    assert sensor.state == []
+
+
+def test_state_generator(setup):
+    sensor, _ = setup
+    result = sensor.generate_state()
+    with pytest.raises(StopIteration):
+        next(result)
+
+
 def test_update_no_disturbance(setup):
     sensor, mock_sampler = setup
     mock_sampler.sample.return_value = 0
