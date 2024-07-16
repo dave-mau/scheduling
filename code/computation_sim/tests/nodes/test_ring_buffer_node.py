@@ -3,6 +3,7 @@ from unittest.mock import MagicMock, Mock
 import pytest
 from computation_sim.basic_types import Header, Message
 from computation_sim.nodes import RingBufferNode
+from computation_sim.nodes import ConstantNormalizer
 
 
 @pytest.fixture
@@ -137,16 +138,81 @@ def test_reset(setup_no_callback):
     assert buffer.num_entries == 0
 
 
-def test_state(setup_no_callback):
+def test_state_full_default_normalizer(setup_no_callback):
     buffer, clock_mock = setup_no_callback
     clock_mock.time = 6
     buffer.receive(Message(Header(1, 2, 3)))
     buffer.receive(Message(Header(4, 5, 6)))
 
     result = buffer.state
-    assert result[0] == pytest.approx(5.0, 1.0e-6)
-    assert result[1] == pytest.approx(4.0, 1.0e-6)
-    assert result[2] == pytest.approx(3.0, 1.0e-6)
-    assert result[3] == pytest.approx(2.0, 1.0e-6)
-    assert result[4] == pytest.approx(1.0, 1.0e-6)
-    assert result[5] == pytest.approx(0.0, 1.0e-6)
+    assert next(result) == pytest.approx(1.0, 1.0e-6)
+    assert next(result) == pytest.approx(5.0, 1.0e-6)
+    assert next(result) == pytest.approx(4.0, 1.0e-6)
+    assert next(result) == pytest.approx(3.0, 1.0e-6)
+    assert next(result) == pytest.approx(1.0, 1.0e-6)
+    assert next(result) == pytest.approx(2.0, 1.0e-6)
+    assert next(result) == pytest.approx(1.0, 1.0e-6)
+    assert next(result) == pytest.approx(0.0, 1.0e-6)
+    with pytest.raises(StopIteration):
+        next(result)
+
+
+def test_state_empty_default_normalizer(setup_no_callback):
+    buffer, clock_mock = setup_no_callback
+    clock_mock.time = 6
+
+    result = buffer.state
+    assert next(result) == pytest.approx(0.0, 1.0e-6)
+    assert next(result) == pytest.approx(0.0, 1.0e-6)
+    assert next(result) == pytest.approx(0.0, 1.0e-6)
+    assert next(result) == pytest.approx(0.0, 1.0e-6)
+    assert next(result) == pytest.approx(0.0, 1.0e-6)
+    assert next(result) == pytest.approx(0.0, 1.0e-6)
+    assert next(result) == pytest.approx(0.0, 1.0e-6)
+    assert next(result) == pytest.approx(0.0, 1.0e-6)
+    with pytest.raises(StopIteration):
+        next(result)
+
+
+def test_state_semifull_default_normalizer(setup_no_callback):
+    buffer, clock_mock = setup_no_callback
+    clock_mock.time = 6
+    buffer.receive(Message(Header(1, 2, 3)))
+
+    result = buffer.state
+    assert next(result) == pytest.approx(1.0, 1.0e-6)
+    assert next(result) == pytest.approx(5.0, 1.0e-6)
+    assert next(result) == pytest.approx(4.0, 1.0e-6)
+    assert next(result) == pytest.approx(3.0, 1.0e-6)
+    assert next(result) == pytest.approx(0.0, 1.0e-6)
+    assert next(result) == pytest.approx(0.0, 1.0e-6)
+    assert next(result) == pytest.approx(0.0, 1.0e-6)
+    assert next(result) == pytest.approx(0.0, 1.0e-6)
+    with pytest.raises(StopIteration):
+        next(result)
+
+
+def test_state_full_custom_normalizer():
+    clock_mock = Mock()
+    buffer = RingBufferNode(
+        clock_mock,
+        max_num_elements=2,
+        age_normalizer=ConstantNormalizer(10.0),
+        occupancy_normalizer=ConstantNormalizer(2.0),
+    )
+
+    clock_mock.time = 6
+    buffer.receive(Message(Header(1, 2, 3)))
+    buffer.receive(Message(Header(4, 5, 6)))
+
+    result = buffer.state
+    assert next(result) == pytest.approx(0.5, 1.0e-6)
+    assert next(result) == pytest.approx(0.5, 1.0e-6)
+    assert next(result) == pytest.approx(0.4, 1.0e-6)
+    assert next(result) == pytest.approx(0.3, 1.0e-6)
+    assert next(result) == pytest.approx(0.5, 1.0e-6)
+    assert next(result) == pytest.approx(0.2, 1.0e-6)
+    assert next(result) == pytest.approx(0.1, 1.0e-6)
+    assert next(result) == pytest.approx(0.0, 1.0e-6)
+    with pytest.raises(StopIteration):
+        next(result)
