@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional
+from typing import List, Optional, Generator
 from uuid import uuid4
 
 from computation_sim.basic_types import Message, NodeId, Time
@@ -30,7 +30,7 @@ class Node(ABC):
 
     @property
     @abstractmethod
-    def state(self) -> List[float]:
+    def state(self) -> Generator[float]:
         pass
 
     @abstractmethod
@@ -67,7 +67,7 @@ class Sensor(ABC):
 
     @property
     @abstractmethod
-    def state(self) -> List[float]:
+    def state(self) -> Generator[float]:
         pass
 
     @property
@@ -84,3 +84,9 @@ class Sensor(ABC):
     def reset(self) -> None:
         self._last_update_time = None
         self._has_measurement = False
+
+
+class StateVariableNormalizer(ABC):
+    @abstractmethod
+    def normalize(self, value: float) -> float:
+        pass
