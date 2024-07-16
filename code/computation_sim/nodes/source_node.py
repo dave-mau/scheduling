@@ -1,5 +1,5 @@
 from copy import deepcopy
-from typing import List
+from typing import Generator
 
 from computation_sim.basic_types import CommunicationError, Message, NodeId
 from computation_sim.time import TimeProvider
@@ -15,9 +15,8 @@ class SourceNode(Node):
     def receive(self, message: Message) -> None:
         raise CommunicationError("Source node cannot receive a message.")
 
-    @property
-    def state(self) -> List[float]:
-        return self._sensor.state
+    def generate_state(self) -> Generator[float, None, None]:
+        yield from self._sensor.state
 
     def update(self):
         self._sensor.update(self.time)
@@ -33,7 +32,9 @@ class SourceNode(Node):
 
     def add_output(self, output: Node) -> None:
         if output in self.outputs:
-            raise ValueError(f"The node with id {output.id} cannot be added twice as output.")
+            raise ValueError(
+                f"The node with id {output.id} cannot be added twice as output."
+            )
         self._outputs.append(output)
 
     def _send(self, message: Message):
