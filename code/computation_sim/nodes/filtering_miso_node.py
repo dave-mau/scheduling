@@ -1,11 +1,12 @@
 from copy import deepcopy
-from typing import List, Optional
+from typing import List, Optional, Generator
 
 import numpy as np
 from computation_sim.basic_types import Header, Message, NodeId, Time
 from computation_sim.time import DurationSampler, TimeProvider, as_age
 
-from .interfaces import Node
+from .interfaces import Node, StateVariableNormalizer
+from .state_normalizers import ConstantNormalizer
 
 
 class FilteringMISONode(Node):
@@ -15,6 +16,8 @@ class FilteringMISONode(Node):
         duration_sampler: DurationSampler,
         id: NodeId = None,
         filter_threshold=np.inf,
+        age_normalizer: StateVariableNormalizer = None,
+        occupancy_normalizer: StateVariableNormalizer = None,
     ):
         super().__init__(time_provider, id)
         self._duration_sampler = duration_sampler
@@ -22,6 +25,12 @@ class FilteringMISONode(Node):
         self._input_messages = []
         self._output_pass: Node = None
         self._output_fail: Node = None
+        self._age_normalizer = (
+            age_normalizer if age_normalizer else ConstantNormalizer(1.0)
+        )
+        self._occupancy_normalizer = (
+            occupancy_normalizer if occupancy_normalizer else ConstantNormalizer(1.0)
+        )
         self.reset()
 
     @property
@@ -31,9 +40,9 @@ class FilteringMISONode(Node):
     def receive(self, message: Message) -> None:
         self._input_messages.append(deepcopy(message))
 
-    @property
-    def state(self) -> List[float]:
-        return [float(self.is_busy), float(as_age(self._t_start, self.time))]
+    def generate_state(self) -> Generator[float, None, None]:
+        yield self._occupancy_normalizer.normalize(float(self.is_busy))
+        yield self._age_normalizer.normalize(float(as_age(self._t_start, self.time)))
 
     def update(self):
         if not self.is_busy:
@@ -104,10 +113,16 @@ class FilteringMISONode(Node):
 
         result = Message(Header())
         result.header.t_measure_oldest = min(i.header.t_measure_oldest for i in inputs)
-        result.header.t_measure_youngest = max(i.header.t_measure_youngest for i in inputs)
+        result.header.t_measure_youngest = max(
+            i.header.t_measure_youngest for i in inputs
+        )
         result.header.num_measurements = sum(i.header.num_measurements for i in inputs)
-        weighted_sum = sum(i.header.num_measurements * i.header.t_measure_average for i in inputs)
-        result.header.t_measure_average = round(weighted_sum / result.header.num_measurements)
+        weighted_sum = sum(
+            i.header.num_measurements * i.header.t_measure_average for i in inputs
+        )
+        result.header.t_measure_average = round(
+            weighted_sum / result.header.num_measurements
+        )
         return result
 
     def _set_task_timer(self):
