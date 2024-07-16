@@ -2,8 +2,7 @@ from unittest.mock import MagicMock, Mock
 
 import pytest
 from computation_sim.basic_types import Header, Message
-from computation_sim.nodes import RingBufferNode
-from computation_sim.nodes import ConstantNormalizer
+from computation_sim.nodes import ConstantNormalizer, RingBufferNode
 
 
 @pytest.fixture

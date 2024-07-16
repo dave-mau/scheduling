@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional, Generator
+from typing import Generator, List, Optional
 from uuid import uuid4
 
 from computation_sim.basic_types import Message, NodeId, Time

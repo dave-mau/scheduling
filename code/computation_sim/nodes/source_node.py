@@ -32,9 +32,7 @@ class SourceNode(Node):
 
     def add_output(self, output: Node) -> None:
         if output in self.outputs:
-            raise ValueError(
-                f"The node with id {output.id} cannot be added twice as output."
-            )
+            raise ValueError(f"The node with id {output.id} cannot be added twice as output.")
         self._outputs.append(output)
 
     def _send(self, message: Message):

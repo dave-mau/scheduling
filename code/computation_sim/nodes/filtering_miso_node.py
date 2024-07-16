@@ -1,5 +1,5 @@
 from copy import deepcopy
-from typing import List, Optional, Generator
+from typing import Generator, List, Optional
 
 import numpy as np
 from computation_sim.basic_types import Header, Message, NodeId, Time
@@ -25,12 +25,8 @@ class FilteringMISONode(Node):
         self._input_messages = []
         self._output_pass: Node = None
         self._output_fail: Node = None
-        self._age_normalizer = (
-            age_normalizer if age_normalizer else ConstantNormalizer(1.0)
-        )
-        self._occupancy_normalizer = (
-            occupancy_normalizer if occupancy_normalizer else ConstantNormalizer(1.0)
-        )
+        self._age_normalizer = age_normalizer if age_normalizer else ConstantNormalizer(1.0)
+        self._occupancy_normalizer = occupancy_normalizer if occupancy_normalizer else ConstantNormalizer(1.0)
         self.reset()
 
     @property
@@ -113,16 +109,10 @@ class FilteringMISONode(Node):
 
         result = Message(Header())
         result.header.t_measure_oldest = min(i.header.t_measure_oldest for i in inputs)
-        result.header.t_measure_youngest = max(
-            i.header.t_measure_youngest for i in inputs
-        )
+        result.header.t_measure_youngest = max(i.header.t_measure_youngest for i in inputs)
         result.header.num_measurements = sum(i.header.num_measurements for i in inputs)
-        weighted_sum = sum(
-            i.header.num_measurements * i.header.t_measure_average for i in inputs
-        )
-        result.header.t_measure_average = round(
-            weighted_sum / result.header.num_measurements
-        )
+        weighted_sum = sum(i.header.num_measurements * i.header.t_measure_average for i in inputs)
+        result.header.t_measure_average = round(weighted_sum / result.header.num_measurements)
         return result
 
     def _set_task_timer(self):

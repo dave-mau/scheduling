@@ -1,5 +1,5 @@
 from itertools import chain
-from typing import Dict, List, Generator
+from typing import Dict, Generator, List
 
 from computation_sim.basic_types import (
     BadNodeGraphError,

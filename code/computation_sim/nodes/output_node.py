@@ -5,8 +5,8 @@ from computation_sim.basic_types import Message, NodeId
 from computation_sim.time import TimeProvider
 
 from .interfaces import Node, StateVariableNormalizer
-from .utils import header_to_state
 from .state_normalizers import ConstantNormalizer
+from .utils import header_to_state
 
 
 class OutputNode(Node):
@@ -21,12 +21,8 @@ class OutputNode(Node):
         super().__init__(time_provider, id)
         self._receive_cb = receive_cb
         self._last_received = None
-        self._age_normalizer = (
-            age_normalizer if age_normalizer else ConstantNormalizer(1.0)
-        )
-        self._occupancy_normalizer = (
-            occupancy_normalizer if occupancy_normalizer else ConstantNormalizer(1.0)
-        )
+        self._age_normalizer = age_normalizer if age_normalizer else ConstantNormalizer(1.0)
+        self._occupancy_normalizer = occupancy_normalizer if occupancy_normalizer else ConstantNormalizer(1.0)
 
     def receive(self, message: Message) -> None:
         self._last_received = deepcopy(message)

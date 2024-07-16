@@ -17,9 +17,7 @@ class SinkNode(Node):
         super().__init__(time_provider, id)
         self._received_messages = []
         self._receive_times = []
-        self._state_normalizer = (
-            count_normalizer if count_normalizer else ConstantNormalizer(1.0)
-        )
+        self._state_normalizer = count_normalizer if count_normalizer else ConstantNormalizer(1.0)
 
     def receive(self, message: Message) -> None:
         self._received_messages.append(message)
