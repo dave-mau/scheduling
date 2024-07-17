@@ -8,24 +8,33 @@ from computation_sim.system import System
 
 
 def test_update_order_topologically_sorted():
+    # Nodes: A -> B, B -> C, C -> D, C -> E, F -> C
+    # Order should be A, B, F, C, D, E
     call_order = []
-    nodes = [Mock() for _ in range(3)]
+    nodes = [Mock() for _ in range(6)]
+    for node, id in zip(nodes, "ABCDEF"):
+        node.id = id
     nodes[0].outputs = [nodes[1]]
     nodes[1].outputs = [nodes[2]]
-    nodes[2].outputs = []
-    nodes[0].update.side_effect = lambda: call_order.append(0)
-    nodes[1].update.side_effect = lambda: call_order.append(1)
-    nodes[2].update.side_effect = lambda: call_order.append(2)
+    nodes[2].outputs = [nodes[3], nodes[4]]
+    nodes[3].outputs = []
+    nodes[4].outputs = []
+    nodes[5].outputs = [nodes[2]]
+    nodes[0].update.side_effect = lambda: call_order.append("A")
+    nodes[1].update.side_effect = lambda: call_order.append("B")
+    nodes[2].update.side_effect = lambda: call_order.append("C")
+    nodes[3].update.side_effect = lambda: call_order.append("D")
+    nodes[4].update.side_effect = lambda: call_order.append("E")
+    nodes[5].update.side_effect = lambda: call_order.append("F")
 
     system = System()
     # Add nodes in non-topological order
-    system.add_node(nodes[1])
-    system.add_node(nodes[2])
-    system.add_node(nodes[0])
+    for node in reversed(nodes):
+        system.add_node(node)
     system.update()
 
     # Make sure that the update methods were calld in topological order
-    assert call_order == [0, 1, 2]
+    assert call_order == ["A", "B", "F", "C", "D", "E"]
 
 
 def test_update_forest_fails():

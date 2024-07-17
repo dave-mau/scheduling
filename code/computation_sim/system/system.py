@@ -7,11 +7,6 @@ from computation_sim.nodes import Node
 from .action import Action
 
 # TODO: Receive callback in MISONode that allows auto-trigger. Also, add unit tests.
-# TODO: Re-work states:
-# - Should be associable with source node
-# - Should be able to retrieve "description" fields that say what a field contains
-# - Should contain "units" or some means to easily allow normalization
-# TODO: Add unit tests for system (lexicographical sort (0 -> 1 -> 2 -> 3, 4 -> 2, 2 -> 5))
 # TODO: Add integration test with buffer and more complex system.
 
 
@@ -65,6 +60,10 @@ class System:
 
     def _compute_update_list(self) -> None:
         if not nx.is_tree(self._node_graph):
-            raise BadNodeGraphError("The node graph is invalid, because it does not form a tree.")
-        self._update_list = list(nx.lexicographical_topological_sort(self._node_graph, key=lambda x: x.id))
+            raise BadNodeGraphError(
+                "The node graph is invalid, because it does not form a tree."
+            )
+        self._update_list = list(
+            nx.lexicographical_topological_sort(self._node_graph, key=lambda x: x.id)
+        )
         self._update_list_set = True
