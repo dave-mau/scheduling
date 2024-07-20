@@ -34,6 +34,15 @@ class SinkNode(Node):
     def generate_state(self) -> Generator[float, None, None]:
         yield self._state_normalizer.normalize(float(len(self._received_messages)))
 
+    @property
+    def draw_options(self) -> dict:
+        return dict(
+            color="darkgrey",
+            shape="triangle-down",
+            hovertext=f"num_messages = {len(self._received_messages)}"
+        )
+
+
     def update(self):
         pass
 

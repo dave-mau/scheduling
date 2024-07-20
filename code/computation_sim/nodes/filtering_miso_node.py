@@ -40,6 +40,13 @@ class FilteringMISONode(Node):
         yield self._occupancy_normalizer.normalize(float(self.is_busy))
         yield self._age_normalizer.normalize(float(as_age(self._t_start, self.time)))
 
+    @property
+    def draw_options(self) -> dict:
+        return dict(
+            color="darkred" if self.is_busy else "darkgreen",
+            symbol="square",
+            hovertext=f"is_busy = {self._is_busy}<br>t_start_age = {self.state[1]}")
+
     def update(self):
         if not self.is_busy:
             # Not busy; nothing to do

@@ -18,6 +18,13 @@ class SourceNode(Node):
     def generate_state(self) -> Generator[float, None, None]:
         yield from self._sensor.state
 
+    @property
+    def draw_options(self) -> dict:
+        return dict(
+            color="floralwhite",
+            marker="triangle-up"
+        )
+
     def update(self):
         self._sensor.update(self.time)
         message = self._sensor.get_measurement()

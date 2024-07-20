@@ -40,6 +40,15 @@ class OutputNode(Node):
         yield self._age_normalizer.normalize(vals[3])
 
     @property
+    def draw_options(self) -> dict:
+        state = self.state
+        return dict(
+            color="dimgrey" if self._last_received else "floralwhite",
+            symbol="circle-dot" if self._last_received else "circle",
+            hovertext=f"is_occupied = {state[0]}<br>msg.age_oldest = {state[1]}<br>msg.age_youngest = {state[2]}<br>msg.age_average = {state[3]}"
+        )
+
+    @property
     def last_received(self) -> Optional[Message]:
         return self._last_received
 
