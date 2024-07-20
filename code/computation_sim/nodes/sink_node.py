@@ -1,4 +1,4 @@
-from typing import Generator
+from typing import Generator, List
 
 from computation_sim.basic_types import Message, NodeId
 from computation_sim.time import TimeProvider
@@ -19,6 +19,14 @@ class SinkNode(Node):
         self._receive_times = []
         self._state_normalizer = count_normalizer if count_normalizer else ConstantNormalizer(1.0)
 
+    @property
+    def received_messages(self) -> List[Message]:
+        return self._received_messages
+
+    @property
+    def received_times(self) -> List[Message]:
+        return self._receive_times
+
     def receive(self, message: Message) -> None:
         self._received_messages.append(message)
         self._receive_times.append(self.time)
@@ -27,8 +35,7 @@ class SinkNode(Node):
         yield self._state_normalizer.normalize(float(len(self._received_messages)))
 
     def update(self):
-        self._received_messages.clear()
-        self._receive_times.clear()
+        pass
 
     def trigger(self):
         pass
