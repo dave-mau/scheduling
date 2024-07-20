@@ -128,6 +128,7 @@ def test_num_nodes():
 
     assert system.num_nodes == 2
 
+
 def test_reset():
     node0 = Mock()
     node1 = Mock()
