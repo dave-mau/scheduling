@@ -12,7 +12,7 @@ dependencies:
   - ipykernel
   - ipython
   - matplotlib
-  - networkx
+  - networkx==3.3
   - numpy
   - pandas
   - scipy
@@ -26,4 +26,5 @@ dependencies:
   - black
   - pytest
   - isort
+  - plotly
 prefix: /home/davidmauderli/.conda/envs/timesync-prototype

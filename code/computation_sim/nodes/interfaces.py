@@ -44,8 +44,10 @@ class Node(ABC):
     def trigger(self):
         pass
 
-    # TODO: Add drawing.
-    # @abstractmethod
+    @property
+    def draw_options(self) -> dict:
+        return {}
+
     # def draw(self, draw_context: DrawContext):
     #    pass
 

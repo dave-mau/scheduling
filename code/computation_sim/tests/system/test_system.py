@@ -127,3 +127,19 @@ def test_num_nodes():
     system.add_node(node)
 
     assert system.num_nodes == 2
+
+
+def test_reset():
+    node0 = Mock()
+    node1 = Mock()
+    node0.outputs = [node1]
+    node1.outputs = []
+
+    system = System()
+    system.add_node(node0)
+    system.add_node(node1)
+
+    system.update()
+    system.reset()
+    node0.reset.assert_called_once()
+    node1.reset.assert_called_once()
