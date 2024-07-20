@@ -45,7 +45,8 @@ class FilteringMISONode(Node):
         return dict(
             color="darkred" if self.is_busy else "darkgreen",
             symbol="square",
-            hovertext=f"is_busy = {self._is_busy}<br>t_start_age = {self.state[1]}")
+            hovertext=f"is_busy = {self._is_busy}<br>t_start_age = {self.state[1]}",
+        )
 
     def update(self):
         if not self.is_busy:

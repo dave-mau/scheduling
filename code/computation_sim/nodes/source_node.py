@@ -20,10 +20,7 @@ class SourceNode(Node):
 
     @property
     def draw_options(self) -> dict:
-        return dict(
-            color="floralwhite",
-            marker="triangle-up"
-        )
+        return dict(color="floralwhite", marker="triangle-up")
 
     def update(self):
         self._sensor.update(self.time)
