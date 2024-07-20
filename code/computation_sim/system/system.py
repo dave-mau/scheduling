@@ -60,10 +60,6 @@ class System:
 
     def _compute_update_list(self) -> None:
         if not nx.is_tree(self._node_graph):
-            raise BadNodeGraphError(
-                "The node graph is invalid, because it does not form a tree."
-            )
-        self._update_list = list(
-            nx.lexicographical_topological_sort(self._node_graph, key=lambda x: x.id)
-        )
+            raise BadNodeGraphError("The node graph is invalid, because it does not form a tree.")
+        self._update_list = list(nx.lexicographical_topological_sort(self._node_graph, key=lambda x: x.id))
         self._update_list_set = True
