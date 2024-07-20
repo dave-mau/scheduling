@@ -16,7 +16,6 @@ class SystemDrawer(object):
     def __init__(self, edge_color="#888", edge_width=0.5):
         self._edge_color = edge_color
         self._edge_width = edge_width
-        pass
 
     def build(self, graph: nx.DiGraph) -> None:
         self._node_positions = self._compute_node_positions(graph)
@@ -63,6 +62,14 @@ class SystemDrawer(object):
             showlegend=False,
         )
 
+    def update(self, graph: nx.DiGraph) -> None:
+        options = self._collect_opts(graph)
+        node_scatter = self.fw.data[1]
+        node_scatter.marker.color = options["color"]
+        node_scatter.marker.symbol = options["symbol"]
+        node_scatter.hovertext = options["hovertext"]
+        self.fw
+
     def _compute_node_positions(self, graph: nx.DiGraph) -> dict:
         layers = dict()
         for layer, node in enumerate(nx.topological_generations(graph)):
@@ -90,11 +97,3 @@ class SystemDrawer(object):
 
         common_keys = set.intersection(*map(set, opts))
         return {k: [dic[k] for dic in opts] for k in common_keys}
-
-    def update(self, graph: nx.DiGraph) -> None:
-        options = self._collect_opts(graph)
-        node_scatter = self.fw.data[1]
-        node_scatter.marker.color = options["color"]
-        node_scatter.marker.symbol = options["symbol"]
-        node_scatter.hovertext = options["hovertext"]
-        self.fw
