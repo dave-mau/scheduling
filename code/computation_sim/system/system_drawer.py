@@ -2,6 +2,14 @@ import networkx as nx
 import plotly.graph_objects as go
 
 
+def default_layout() -> dict:
+    return {
+        "color": "#1f77b4",
+        "symbol": "circle",
+        "hovertext": "",
+    }
+
+
 class SystemDrawer(object):
     def __init__(self, edge_color="#888", edge_width=0.5):
         self._edge_color = edge_color
@@ -32,7 +40,13 @@ class SystemDrawer(object):
 
     def build_nodes(self, graph: nx.DiGraph) -> None:
         x, y = zip(*[self._positions[node] for node in graph.nodes])
-        opts = [node.draw_options for node in graph.nodes]
+        opts = []
+        for node in graph.nodes:
+            opt = node.draw_options
+            opt["text"] = node.id
+            for key, val in default_layout().items():
+                opt.setdefault(key, val)
+            opts.append(opt)
 
         common_keys = set.intersection(*map(set, opts))
         v = {k: [dic[k] for dic in opts] for k in common_keys}
@@ -48,7 +62,7 @@ class SystemDrawer(object):
                 symbol=v["symbol"],
                 size=100,
                 line_width=2,
-                coloraxis='coloraxis'
+                coloraxis="coloraxis",
             ),
             text=v["text"],
             hovertext=v["hovertext"],
@@ -71,7 +85,7 @@ class SystemDrawer(object):
                 margin=dict(b=20, l=5, r=5, t=40),
                 xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
                 yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-                coloraxis=dict(colorbar=dict(thickness=0, ticklen=0))
+                coloraxis=dict(colorbar=dict(thickness=0, ticklen=0)),
             ),
         )
         self._fig.update_layout(coloraxis_showscale=False)

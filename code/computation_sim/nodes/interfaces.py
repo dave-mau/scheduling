@@ -46,7 +46,7 @@ class Node(ABC):
 
     @property
     def draw_options(self) -> dict:
-        return {"color": "#1f77b4", "symbol": "circle", "text": f"{self.id}", "hovertext": ""}
+        return {}
 
     # def draw(self, draw_context: DrawContext):
     #    pass
