@@ -44,7 +44,7 @@ class OutputNode(Node):
         state = self.state
         return dict(
             color="dimgrey" if self._last_received else "floralwhite",
-            symbol="circle-dot" if self._last_received else "circle",
+            symbol="circle",
             hovertext=f"is_occupied = {state[0]}<br>msg.age_oldest = {state[1]}<br>msg.age_youngest = {state[2]}<br>msg.age_average = {state[3]}",
         )
 

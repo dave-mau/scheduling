@@ -37,7 +37,7 @@ class SinkNode(Node):
     @property
     def draw_options(self) -> dict:
         return dict(
-            color="darkgrey", shape="triangle-down", hovertext=f"num_messages = {len(self._received_messages)}"
+            color="darkgrey", symbol="triangle-down", hovertext=f"num_messages = {len(self._received_messages)}"
         )
 
     def update(self):
