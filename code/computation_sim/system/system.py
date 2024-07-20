@@ -7,8 +7,6 @@ from computation_sim.nodes import Node
 from .action import Action
 
 # TODO: Receive callback in MISONode that allows auto-trigger. Also, add unit tests.
-# TODO: Add integration test with buffer and more complex system.
-
 
 class System:
     def __init__(self):
