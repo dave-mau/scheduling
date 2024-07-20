@@ -44,9 +44,11 @@ class OutputNode(Node):
         return self._last_received
 
     def update(self):
+        # nothing to do
         pass
 
     def trigger(self):
+        # nothing to do
         pass
 
     def reset(self):
