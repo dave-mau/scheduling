@@ -44,7 +44,7 @@ class Node(ABC):
     def trigger(self):
         pass
 
-    # TODO: Add "trigger"
+    # TODO: Add drawing.
     # @abstractmethod
     # def draw(self, draw_context: DrawContext):
     #    pass
