@@ -13,13 +13,14 @@ RUN python3 -m pip install \
     imageio \
     isort \
     matplotlib \
-    networkx \
+    networkx==3.3 \
     numpy \
     pandas \
     pytest \
     scipy \
     sympy \
-    tqdm 
+    tqdm \
+    plotly
 
 # Add ci-user
 RUN useradd -ms /bin/bash ci
