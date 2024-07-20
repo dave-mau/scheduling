@@ -8,3 +8,7 @@ class CommunicationError(ComputationSimError):
 
 class BadNodeGraphError(ComputationSimError):
     pass
+
+
+class BadActionError(ComputationSimError):
+    pass

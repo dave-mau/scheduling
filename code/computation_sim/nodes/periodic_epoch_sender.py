@@ -1,4 +1,4 @@
-from typing import List
+from typing import Generator
 
 from computation_sim.basic_types import Header, Message, Time
 from computation_sim.time import DurationSampler
@@ -15,9 +15,8 @@ class PeriodicEpochSensor(Sensor):
         self._nominal_send_time = self._epoch
         self._actual_send_time = self._nominal_send_time
 
-    @property
-    def state(self) -> List[float]:
-        return []
+    def generate_state(self) -> Generator[float, None, None]:
+        yield from []
 
     def get_measurement(self) -> Message | None:
         if self.has_measurement:

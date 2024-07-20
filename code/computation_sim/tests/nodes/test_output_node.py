@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, Mock
 
 import pytest
 from computation_sim.basic_types import Header, Message
-from computation_sim.nodes import OutputNode
+from computation_sim.nodes import ConstantNormalizer, OutputNode
 
 
 def test_receive_copies():
@@ -26,21 +26,25 @@ def test_state_has_output():
     clock_mock = Mock()
     clock_mock.time = 10
 
-    node = OutputNode(clock_mock)
+    node = OutputNode(
+        clock_mock,
+        age_normalizer=ConstantNormalizer(10.0),
+        occupancy_normalizer=ConstantNormalizer(0.1),
+    )
     node.receive(Message(Header(1, 2, 3), "foo"))
 
     state = node.state
-    assert state[0] == pytest.approx(1.0, 1.0e-6)
-    assert state[1] == pytest.approx(9.0, 1.0e-6)
-    assert state[2] == pytest.approx(8.0, 1.0e-6)
-    assert state[3] == pytest.approx(7.0, 1.0e-6)
+    assert state[0] == pytest.approx(10.0, 1.0e-6)
+    assert state[1] == pytest.approx(0.9, 1.0e-6)
+    assert state[2] == pytest.approx(0.8, 1.0e-6)
+    assert state[3] == pytest.approx(0.7, 1.0e-6)
 
     clock_mock.time = 11
     state = node.state
-    assert state[0] == pytest.approx(1.0, 1.0e-6)
-    assert state[1] == pytest.approx(10.0, 1.0e-6)
-    assert state[2] == pytest.approx(9.0, 1.0e-6)
-    assert state[3] == pytest.approx(8.0, 1.0e-6)
+    assert state[0] == pytest.approx(10.0, 1.0e-6)
+    assert state[1] == pytest.approx(1.0, 1.0e-6)
+    assert state[2] == pytest.approx(0.9, 1.0e-6)
+    assert state[3] == pytest.approx(0.8, 1.0e-6)
 
 
 def test_state_has_no_output():

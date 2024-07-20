@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Optional
+from typing import Generator, List, Optional
 from uuid import uuid4
 
 from computation_sim.basic_types import Message, NodeId, Time
@@ -28,10 +28,13 @@ class Node(ABC):
     def receive(self, message: Message) -> None:
         pass
 
-    @property
     @abstractmethod
-    def state(self) -> List[float]:
+    def generate_state(self) -> Generator[float, None, None]:
         pass
+
+    @property
+    def state(self) -> List[float]:
+        return list(self.generate_state())
 
     @abstractmethod
     def update(self):
@@ -41,7 +44,7 @@ class Node(ABC):
     def trigger(self):
         pass
 
-    # TODO: Add "trigger"
+    # TODO: Add drawing.
     # @abstractmethod
     # def draw(self, draw_context: DrawContext):
     #    pass
@@ -65,10 +68,13 @@ class Sensor(ABC):
         self._last_update_time: Optional[Time] = None
         self._has_measurement = False
 
-    @property
     @abstractmethod
-    def state(self) -> List[float]:
+    def generate_state(self) -> Generator[float, None, None]:
         pass
+
+    @property
+    def state(self) -> List[float]:
+        return list(self.generate_state())
 
     @property
     def has_measurement(self) -> bool:
@@ -84,3 +90,9 @@ class Sensor(ABC):
     def reset(self) -> None:
         self._last_update_time = None
         self._has_measurement = False
+
+
+class StateVariableNormalizer(ABC):
+    @abstractmethod
+    def normalize(self, value: float) -> float:
+        pass

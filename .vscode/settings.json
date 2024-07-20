@@ -10,7 +10,10 @@
     "python.testing.pytestEnabled": true,
     "editor.indentSize": "tabSize",
     "editor.tabSize": 4,
-    "black-formatter.args": [],
+    "black-formatter.args": [
+        "--max-line-length",
+        "119"
+    ],
     "black-formatter.interpreter": [
         "python3"
     ],

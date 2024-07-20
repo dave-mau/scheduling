@@ -1,10 +1,11 @@
 from collections import deque
-from typing import Callable, List, Optional
+from typing import Callable, Generator, Optional
 
 from computation_sim.basic_types import Message, NodeId
 from computation_sim.time import TimeProvider
 
-from .interfaces import Node
+from .interfaces import Node, StateVariableNormalizer
+from .state_normalizers import ConstantNormalizer
 from .utils import header_to_state
 
 
@@ -15,22 +16,32 @@ class RingBufferNode(Node):
         id: NodeId = None,
         max_num_elements=1,
         overflow_cb: Callable[[Message], None] = None,
+        age_normalizer: StateVariableNormalizer = None,
+        occupancy_normalizer: StateVariableNormalizer = None,
     ):
         super().__init__(time_provider, id)
         self._buffer = deque(maxlen=max_num_elements)
         self._overflow_cb = overflow_cb
+        self._age_normalizer = age_normalizer if age_normalizer else ConstantNormalizer(1.0)
+        self._occupancy_normalizer = occupancy_normalizer if occupancy_normalizer else ConstantNormalizer(1.0)
 
     def receive(self, message: Message) -> None:
         if self._overflow_cb and (self.num_entries == self._buffer.maxlen):
             self._overflow_cb(self._buffer.popleft())
         self._buffer.append(message)
 
-    @property
-    def state(self) -> List[float]:
-        result = []
+    def generate_state(self) -> Generator[float, None, None]:
+        # Write non-empty elements
         for element in self._buffer:
-            result.extend(header_to_state(element.header, self.time))
-        return result
+            yield self._occupancy_normalizer.normalize(1.0)
+            for x in header_to_state(element.header, self.time):
+                yield self._age_normalizer.normalize(x)
+        # Write empty elements
+        for _ in range(self.maxlen - len(self._buffer)):
+            yield self._occupancy_normalizer.normalize(0.0)
+            yield self._age_normalizer.normalize(0.0)
+            yield self._age_normalizer.normalize(0.0)
+            yield self._age_normalizer.normalize(0.0)
 
     @property
     def num_entries(self) -> int:
