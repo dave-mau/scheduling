@@ -12,8 +12,8 @@ def setup_no_callback():
     return buffer, clock_mock
 
 
-def test_receive_no_overflow(setup_no_callback):
-    buffer, clock_mock = setup_no_callback
+def test_receive_no_overflow_0(setup_no_callback):
+    buffer, _ = setup_no_callback
 
     assert buffer.num_entries == 0
 
@@ -33,8 +33,8 @@ def test_receive_no_overflow(setup_no_callback):
     assert result is None
 
 
-def test_receive_overflow(setup_no_callback):
-    buffer, clock_mock = setup_no_callback
+def test_receive_overflow_0(setup_no_callback):
+    buffer, _ = setup_no_callback
 
     assert buffer.num_entries == 0
 
@@ -65,7 +65,7 @@ def setup_callback():
     return buffer, clock_mock, cb_mock
 
 
-def test_receive_no_overflow(setup_callback):
+def test_receive_no_overflow_1(setup_callback):
     buffer, _, cb_mock = setup_callback
 
     buffer.receive(Message(Header(1, 2, 3)))
@@ -73,7 +73,7 @@ def test_receive_no_overflow(setup_callback):
     assert not cb_mock.called
 
 
-def test_receive_overflow(setup_callback):
+def test_receive_overflow_1(setup_callback):
     buffer, _, cb_mock = setup_callback
 
     buffer.receive(Message(Header(1, 2, 3)))
