@@ -62,3 +62,7 @@ class System:
             raise BadNodeGraphError("The node graph is invalid, because it does not form a tree.")
         self._update_list = list(nx.lexicographical_topological_sort(self._node_graph, key=lambda x: x.id))
         self._update_list_set = True
+
+    def reset(self) -> None:
+        for node in self._update_list:
+            node.reset()
