@@ -2,48 +2,21 @@ from typing import Tuple
 
 import numpy as np
 import pytest
-from computation_sim.nodes import (
-    FilteringMISONode,
-    Node,
-    OutputNode,
-    PeriodicEpochSensor,
-    SinkNode,
-    SourceNode,
-)
-from computation_sim.system import Action, System
-from computation_sim.time import Clock, FixedDuration, TimeProvider
+from computation_sim.example_systems import SimpleChainBuilder
+from computation_sim.nodes import Node
+from computation_sim.system import System
+from computation_sim.time import Clock, FixedDuration
 
 
 @pytest.fixture
 def setup() -> Tuple[System, Clock, Tuple[Node]]:
     clock = Clock(0)
+    builder = SimpleChainBuilder(clock, sensor_epoch=0, sensor_period=100)
+    builder.sensor_disturbance = FixedDuration(0)
+    builder.compute_duration = FixedDuration(10)
+    builder.build()
 
-    # Setup the source
-    sensor = PeriodicEpochSensor(0, 100, FixedDuration(0))
-    source_node = SourceNode(clock.as_readonly(), sensor, "SOURCE_NODE")
-    # Setup the processor node
-    compute_node = FilteringMISONode(clock.as_readonly(), FixedDuration(10), id="COMPUTE_NODE")
-    # Setup the output node
-    output_node = OutputNode(clock.as_readonly(), id="OUTPUT_NODE")
-    # Setup a sink for failing compute
-    sink_node = SinkNode(clock.as_readonly(), id="SINK_NODE")
-
-    # Connect outputs
-    source_node.add_output(compute_node)
-    compute_node.set_output_pass(output_node)
-    compute_node.set_output_fail(sink_node)
-
-    # Set-up the action
-    compute_action = Action(name="ACT_COMPUTE_NODE")
-    compute_action.register_callback(compute_node.trigger, 0)
-
-    system = System()
-    system.add_action(compute_action)
-    system.add_node(sink_node)
-    system.add_node(output_node)
-    system.add_node(compute_node)
-    system.add_node(source_node)
-    return system, clock, (source_node, compute_node, output_node, sink_node)
+    return builder.system, clock, builder.nodes
 
 
 def test_no_action_no_output(setup):
@@ -52,7 +25,7 @@ def test_no_action_no_output(setup):
         clock += 1
         system.update()
 
-    assert nodes[2].last_received is None
+    assert nodes["OUTPUT"].last_received is None
 
 
 def test_nominal(setup):
@@ -70,7 +43,7 @@ def test_nominal(setup):
             atol=1.0e-6,
         )
         clock += 1
-        assert nodes[2].last_received is None
+        assert nodes["OUTPUT"].last_received is None
 
     # t = 50 -- ACT (start compute)
     system.act([1])
@@ -85,7 +58,7 @@ def test_nominal(setup):
             atol=1.0e-6,
         )
         clock += 1
-        assert nodes[2].last_received is None
+        assert nodes["OUTPUT"].last_received is None
 
     # t = 60 -- OUTPUT RECEIVED
     system.update()
