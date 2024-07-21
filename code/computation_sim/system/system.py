@@ -29,6 +29,10 @@ class System:
             state.extend(node.generate_state())
         return state
 
+    @property
+    def node_graph(self) -> nx.DiGraph:
+        return self._node_graph.copy(as_view=True)
+
     def add_node(self, node: Node) -> None:
         self._node_graph.add_node(node)
         for output in node.outputs:
