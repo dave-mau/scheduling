@@ -17,4 +17,4 @@ class SystemBuidler(ABC):
 
     @property
     def nodes(self) -> Dict[str, Node]:
-        return self._node_dict
+        return self._nodes
