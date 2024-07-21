@@ -1,7 +1,6 @@
 from computation_sim.basic_types import Time
 from computation_sim.nodes import (
     FilteringMISONode,
-    Node,
     OutputNode,
     PeriodicEpochSensor,
     SinkNode,
@@ -9,7 +8,7 @@ from computation_sim.nodes import (
     StateVariableNormalizer,
 )
 from computation_sim.system import Action, System, SystemBuidler
-from computation_sim.time import Clock, DurationSampler, FixedDuration
+from computation_sim.time import Clock, DurationSampler
 
 
 class SimpleChainBuilder(SystemBuidler):
@@ -22,7 +21,7 @@ class SimpleChainBuilder(SystemBuidler):
         compute_duration: DurationSampler = None,
         age_normalizer: StateVariableNormalizer = None,
         occupancy_normalizer: StateVariableNormalizer = None,
-        count_normalizer: StateVariableNormalizer = None
+        count_normalizer: StateVariableNormalizer = None,
     ):
         self.clock = clock
         self._system = None
@@ -60,7 +59,9 @@ class SimpleChainBuilder(SystemBuidler):
         )
 
         # 4. SINK
-        self._nodes["SINK"] = SinkNode(self.clock.as_readonly(), id="SINK_NODE", count_normalizer = self.count_normalizer)
+        self._nodes["SINK"] = SinkNode(
+            self.clock.as_readonly(), id="SINK_NODE", count_normalizer=self.count_normalizer
+        )
 
         # Connect outputs
         self._nodes["SOURCE"].add_output(self._nodes["COMPUTE"])

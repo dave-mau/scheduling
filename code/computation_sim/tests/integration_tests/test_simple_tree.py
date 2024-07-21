@@ -2,6 +2,7 @@ from typing import Tuple
 
 import numpy as np
 import pytest
+from computation_sim.example_systems import SimpleTreeBuilder
 from computation_sim.nodes import (
     ConstantNormalizer,
     FilteringMISONode,
@@ -19,78 +20,17 @@ from computation_sim.time import Clock, FixedDuration, TimeProvider
 @pytest.fixture
 def setup() -> Tuple[System, Clock, Tuple[Node]]:
     clock = Clock(0)
-
-    # Normalizer for time
-    normalizer = ConstantNormalizer(100.0)
-
-    # Setup the source
-    sensor = PeriodicEpochSensor(0, 100, FixedDuration(0))
-    source_node_0 = SourceNode(clock.as_readonly(), sensor, "SOURCE_NODE_0")
-    sensor = PeriodicEpochSensor(0, 100, FixedDuration(0))
-    source_node_1 = SourceNode(clock.as_readonly(), sensor, "SOURCE_NODE_1")
-
-    # Setup sink and output
-    output_node = OutputNode(clock.as_readonly(), id="OUTPUT_NODE", age_normalizer=normalizer)
-    lost_node = SinkNode(clock.as_readonly(), id="LOST_MESSAGES")
-
-    # Setup buffers
-    buffer_0 = RingBufferNode(
-        clock.as_readonly(),
-        "BUFFER_0",
-        age_normalizer=normalizer,
-    )
-    buffer_1 = RingBufferNode(
-        clock.as_readonly(),
-        "BUFFER_1",
-        age_normalizer=normalizer,
-    )
-
-    # Setup the processor node
-    compute_node = FilteringMISONode(
-        clock.as_readonly(),
-        FixedDuration(10),
-        id="COMPUTE_NODE",
-        age_normalizer=normalizer,
-    )
-
-    # Connect outputs
-    source_node_0.add_output(buffer_0)
-    source_node_1.add_output(buffer_1)
-    buffer_0.set_output(compute_node)
-    buffer_0.set_overflow_output(lost_node)
-    buffer_1.set_output(compute_node)
-    buffer_1.set_overflow_output(lost_node)
-    compute_node.set_output_fail(lost_node)
-    compute_node.set_output_pass(output_node)
-
-    # Set-up the action
-    compute_action = Action(name="ACT_COMPUTE_NODE")
-    compute_action.register_callback(buffer_0.trigger, 1)
-    compute_action.register_callback(buffer_1.trigger, 1)
-    compute_action.register_callback(compute_node.trigger, 0)
-
-    system = System()
-    system.add_action(compute_action)
-    system.add_node(lost_node)
-    system.add_node(output_node)
-    system.add_node(compute_node)
-    system.add_node(source_node_0)
-    system.add_node(source_node_1)
-    system.add_node(buffer_0)
-    system.add_node(buffer_1)
-    return (
-        system,
+    builder = SimpleTreeBuilder(
         clock,
-        (
-            source_node_0,
-            source_node_1,
-            buffer_0,
-            buffer_1,
-            compute_node,
-            output_node,
-            lost_node,
-        ),
+        sensor_epochs=[0, 0],
+        sensor_periods=[100, 100],
+        sensor_disturbances=[FixedDuration(0), FixedDuration(0)],
     )
+    builder.age_normalizer = ConstantNormalizer(100.0)
+    builder.compute_duration = FixedDuration(10)
+    builder.build()
+
+    return builder.system, clock, builder.nodes
 
 
 def test_no_action(setup):
