@@ -13,9 +13,11 @@ def default_layout() -> dict:
 
 
 class SystemDrawer(object):
-    def __init__(self, edge_color="#888", edge_width=0.5):
+    def __init__(self, edge_color="#888", edge_width=1.0, marker_size=20, maker_line_width=2):
         self._edge_color = edge_color
         self._edge_width = edge_width
+        self._marker_size = marker_size
+        self._marker_line_width = maker_line_width
 
     def build(self, graph: nx.DiGraph) -> None:
         self._node_positions = self._compute_node_positions(graph)
@@ -53,8 +55,8 @@ class SystemDrawer(object):
                 showscale=False,
                 color=options["color"],
                 symbol=options["symbol"],
-                size=100,
-                line_width=2,
+                size=self._marker_size,
+                line_width=self._marker_line_width,
                 coloraxis="coloraxis",
             ),
             text=options["text"],
