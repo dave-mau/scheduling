@@ -143,3 +143,52 @@ def test_reset():
     system.reset()
     node0.reset.assert_called_once()
     node1.reset.assert_called_once()
+
+
+def test_no_directed_cycles_but_undirected_cycles():
+    system = System()
+    n0 = Mock()
+    n1 = Mock()
+    n2 = Mock()
+    n3 = Mock()
+    n0.outputs = [n1, n3]
+    n1.outputs = [n2]
+    n2.outputs = [n3]
+    n3.outputs = []
+    system.add_node(n0)
+    system.add_node(n1)
+    system.add_node(n2)
+    system.add_node(n3)
+    system.update()
+
+
+def test_directed_cycles_raises():
+    system = System()
+    n0 = Mock()
+    n1 = Mock()
+    n2 = Mock()
+    n0.outputs = [n1]
+    n1.outputs = [n2]
+    n2.outputs = [n0]
+    system.add_node(n0)
+    system.add_node(n1)
+    system.add_node(n2)
+
+    with pytest.raises(BadNodeGraphError):
+        system.update()
+
+
+def test_not_weakly_connected():
+    system = System()
+    n0 = Mock()
+    n1 = Mock()
+    n2 = Mock()
+    n0.outputs = [n1]
+    n1.outputs = []
+    n2.outputs = []
+    system.add_node(n0)
+    system.add_node(n1)
+    system.add_node(n2)
+
+    with pytest.raises(BadNodeGraphError):
+        system.update()
