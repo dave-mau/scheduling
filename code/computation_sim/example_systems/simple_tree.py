@@ -48,7 +48,8 @@ class SimpleTreeBuilder(SystemBuidler):
             age_normalizer=self.age_normalizer,
             occupancy_normalizer=self.occupancy_normalizer,
         )
-        self._nodes["LOST"] = SinkNode(self.clock.as_readonly(), id="LOST", count_normalizer=self.count_normalizer)
+        self._nodes["LOST_BUFFER"] = SinkNode(self.clock.as_readonly(), id="LOST_BUFFER", count_normalizer=self.count_normalizer)
+        self._nodes["LOST_COMPUTE"] = SinkNode(self.clock.as_readonly(), id="LOST_COMPUTE", count_normalizer=self.count_normalizer)
         self._nodes["COMPUTE"] = FilteringMISONode(
             self.clock.as_readonly(),
             self.compute_duration,
@@ -57,7 +58,7 @@ class SimpleTreeBuilder(SystemBuidler):
             occupancy_normalizer=self.occupancy_normalizer,
         )
         self._nodes["COMPUTE"].set_output_pass(self._nodes["OUTPUT"])
-        self._nodes["COMPUTE"].set_output_fail(self._nodes["LOST"])
+        self._nodes["COMPUTE"].set_output_fail(self._nodes["LOST_COMPUTE"])
 
         compute_action = Action(name="ACT_COMPUTE_NODE")
         for i, (epoch, period, dist) in enumerate(
@@ -74,7 +75,7 @@ class SimpleTreeBuilder(SystemBuidler):
             )
             self._nodes[f"SOURCE_{i}"].add_output(self._nodes[f"BUFFER_{i}"])
             self._nodes[f"BUFFER_{i}"].set_output(self._nodes["COMPUTE"])
-            self._nodes[f"BUFFER_{i}"].set_overflow_output(self._nodes["LOST"])
+            self._nodes[f"BUFFER_{i}"].set_overflow_output(self._nodes["LOST_BUFFER"])
             compute_action.register_callback(self._nodes[f"BUFFER_{i}"].trigger, 1)
         compute_action.register_callback(self._nodes["COMPUTE"].trigger, 0)
 
