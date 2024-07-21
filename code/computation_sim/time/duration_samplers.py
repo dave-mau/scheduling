@@ -22,7 +22,7 @@ class FixedDuration(DurationSampler):
 
 
 class GaussianTimeSampler(DurationSampler):
-    def __init__(self, mu: float, std: float, gain: float, offset = float):
+    def __init__(self, mu: float, std: float, gain: float, offset=float):
         self._mu = mu
         self._std = std
         self._gain = gain
