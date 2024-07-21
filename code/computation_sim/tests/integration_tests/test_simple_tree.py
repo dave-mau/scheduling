@@ -37,13 +37,11 @@ def setup() -> Tuple[System, Clock, Tuple[Node]]:
     buffer_0 = RingBufferNode(
         clock.as_readonly(),
         "BUFFER_0",
-        overflow_cb=lambda x: lost_node.receive(x),
         age_normalizer=normalizer,
     )
     buffer_1 = RingBufferNode(
         clock.as_readonly(),
         "BUFFER_1",
-        overflow_cb=lambda x: lost_node.receive(x),
         age_normalizer=normalizer,
     )
 
@@ -58,8 +56,10 @@ def setup() -> Tuple[System, Clock, Tuple[Node]]:
     # Connect outputs
     source_node_0.add_output(buffer_0)
     source_node_1.add_output(buffer_1)
-    buffer_0.add_output(compute_node)
-    buffer_1.add_output(compute_node)
+    buffer_0.set_output(compute_node)
+    buffer_0.set_overflow_output(lost_node)
+    buffer_1.set_output(compute_node)
+    buffer_1.set_overflow_output(lost_node)
     compute_node.set_output_fail(lost_node)
     compute_node.set_output_pass(output_node)
 

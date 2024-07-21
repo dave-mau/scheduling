@@ -1,7 +1,7 @@
 from collections import deque
-from typing import Callable, Generator, Optional
+from typing import Generator, List, Optional
 
-from computation_sim.basic_types import Message, NodeId
+from computation_sim.basic_types import BadNodeGraphError, Message, NodeId
 from computation_sim.time import TimeProvider
 
 from .interfaces import Node, StateVariableNormalizer
@@ -15,19 +15,23 @@ class RingBufferNode(Node):
         time_provider: TimeProvider,
         id: NodeId = None,
         max_num_elements=1,
-        overflow_cb: Callable[[Message], None] = None,
         age_normalizer: StateVariableNormalizer = None,
         occupancy_normalizer: StateVariableNormalizer = None,
     ):
         super().__init__(time_provider, id)
         self._buffer = deque(maxlen=max_num_elements)
-        self._overflow_cb = overflow_cb
         self._age_normalizer = age_normalizer if age_normalizer else ConstantNormalizer(1.0)
         self._occupancy_normalizer = occupancy_normalizer if occupancy_normalizer else ConstantNormalizer(1.0)
+        self._output = None
+        self._overflow_output = None
+
+    @property
+    def outputs(self) -> List[Node]:
+        return [self._output, self._overflow_output]
 
     def receive(self, message: Message) -> None:
-        if self._overflow_cb and (self.num_entries == self._buffer.maxlen):
-            self._overflow_cb(self._buffer.popleft())
+        if self._overflow_output and (self.num_entries == self._buffer.maxlen):
+            self._overflow_output.receive(self._buffer.popleft())
         self._buffer.append(message)
 
     def generate_state(self) -> Generator[float, None, None]:
@@ -74,16 +78,20 @@ class RingBufferNode(Node):
         pass
 
     def trigger(self):
+        if not self._output:
+            raise BadNodeGraphError("RingBufferNode was triggered, but has no output!")
         if self.num_entries > 0:
             message = self._buffer.popleft()
-            for output in self._outputs:
-                output.receive(message)
+            self._output.receive(message)
 
     def reset(self):
         self._buffer.clear()
 
-    def add_output(self, output: Node):
-        self._outputs.append(output)
+    def set_output(self, output: Node):
+        self._output = output
+
+    def set_overflow_output(self, output: Node):
+        self._overflow_output = output
 
     def pop(self) -> Optional[Message]:
         return self._buffer.popleft() if len(self._buffer) > 0 else None

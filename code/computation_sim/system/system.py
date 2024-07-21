@@ -58,10 +58,18 @@ class System:
                 action.act()
 
     def _compute_update_list(self) -> None:
-        if not nx.is_tree(self._node_graph):
-            raise BadNodeGraphError("The node graph is invalid, because it does not form a tree.")
+        self._check_cycles()
+        self._check_weakly_connected()
         self._update_list = list(nx.lexicographical_topological_sort(self._node_graph, key=lambda x: x.id))
         self._update_list_set = True
+
+    def _check_cycles(self) -> None:
+        if any(nx.simple_cycles(self._node_graph)):
+            raise BadNodeGraphError(f"The node graph is invalid, because it has directed cycles.")
+
+    def _check_weakly_connected(self) -> None:
+        if not nx.is_weakly_connected(self._node_graph):
+            raise BadNodeGraphError(f"The node graph is not weakly connected. Did you forget to set any outputs?")
 
     def reset(self) -> None:
         for node in self._update_list:
