@@ -1,5 +1,5 @@
 from copy import deepcopy
-from typing import Generator, List, Optional
+from typing import Callable, Generator, List, Optional
 
 import numpy as np
 from computation_sim.basic_types import Header, Message, NodeId, Time
@@ -18,6 +18,7 @@ class FilteringMISONode(Node):
         filter_threshold=np.inf,
         age_normalizer: StateVariableNormalizer = None,
         occupancy_normalizer: StateVariableNormalizer = None,
+        receive_cb: Callable[["FilteringMISONode"], None] = None,
     ):
         super().__init__(time_provider, id)
         self._duration_sampler = duration_sampler
@@ -27,6 +28,7 @@ class FilteringMISONode(Node):
         self._output_fail: Node = None
         self._age_normalizer = age_normalizer if age_normalizer else ConstantNormalizer(1.0)
         self._occupancy_normalizer = occupancy_normalizer if occupancy_normalizer else ConstantNormalizer(1.0)
+        self._receive_cb = receive_cb
         self.reset()
 
     @property
@@ -35,6 +37,8 @@ class FilteringMISONode(Node):
 
     def receive(self, message: Message) -> None:
         self._input_messages.append(deepcopy(message))
+        if self._receive_cb:
+            self._receive_cb(self)
 
     def generate_state(self) -> Generator[float, None, None]:
         yield self._occupancy_normalizer.normalize(float(self.is_busy))
@@ -128,3 +132,6 @@ class FilteringMISONode(Node):
         self._duration = self._duration_sampler.sample()
         self._t_stop = self._t_start + self._duration
         self._is_busy = True
+
+    def set_receive_cb(self, callback: Callable[["FilteringMISONode"], None]) -> None:
+        self._receive_cb = callback

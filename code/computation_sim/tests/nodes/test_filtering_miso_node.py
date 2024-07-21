@@ -1,4 +1,4 @@
-from unittest.mock import Mock
+from unittest.mock import MagicMock, Mock
 
 import pytest
 from computation_sim.basic_types import Header, Message
@@ -256,3 +256,19 @@ def test_multiple_inputs_all_rejected(setup_empty_with_outputs):
     clock_mock.time += 10
     node.update()
     recv_pass_mock.receive.assert_not_called()
+
+
+def test_receive_cb_setter():
+    node = FilteringMISONode(MagicMock(), MagicMock())
+    trigger_cb = MagicMock()
+    node.set_receive_cb(trigger_cb)
+    node.receive(Message(Header()))
+    trigger_cb.assert_called_once_with(node)
+
+
+def test_receive_cb_init():
+    trigger_cb = MagicMock()
+    node = FilteringMISONode(MagicMock(), MagicMock(), receive_cb=trigger_cb)
+    node.receive(Message(Header()))
+
+    trigger_cb.assert_called_once_with(node)
