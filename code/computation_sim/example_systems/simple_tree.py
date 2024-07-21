@@ -48,8 +48,12 @@ class SimpleTreeBuilder(SystemBuidler):
             age_normalizer=self.age_normalizer,
             occupancy_normalizer=self.occupancy_normalizer,
         )
-        self._nodes["LOST_BUFFER"] = SinkNode(self.clock.as_readonly(), id="LOST_BUFFER", count_normalizer=self.count_normalizer)
-        self._nodes["LOST_COMPUTE"] = SinkNode(self.clock.as_readonly(), id="LOST_COMPUTE", count_normalizer=self.count_normalizer)
+        self._nodes["LOST_BUFFER"] = SinkNode(
+            self.clock.as_readonly(), id="LOST_BUFFER", count_normalizer=self.count_normalizer
+        )
+        self._nodes["LOST_COMPUTE"] = SinkNode(
+            self.clock.as_readonly(), id="LOST_COMPUTE", count_normalizer=self.count_normalizer
+        )
         self._nodes["COMPUTE"] = FilteringMISONode(
             self.clock.as_readonly(),
             self.compute_duration,
