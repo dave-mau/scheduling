@@ -53,11 +53,12 @@ def test_no_action(setup):
                 age,  #  7: Buffer 1: Average Age
                 0.0,  #  8: Compute Node: Busy
                 age,  #  9: Compute Node: Age last started
-                0.0,  # 10: Lost Messages: Count
-                0.0,  # 11: Output: Occupancy
-                0.0,  # 12: Output: Oldest Age
-                0.0,  # 13: Output: Youngest Age
-                0.0,  # 14: Output: Average Age
+                0.0,  # 10: Lost Messages (Buffers): Count
+                0.0,  # 11: Lost Messages (Compute): Count
+                0.0,  # 12: Output: Occupancy
+                0.0,  # 13: Output: Oldest Age
+                0.0,  # 14: Output: Youngest Age
+                0.0,  # 15: Output: Average Age
             ]
         )
         state = np.array(system.state)
@@ -82,11 +83,12 @@ def test_no_action(setup):
                 age,  #  7: Buffer 1: Average Age
                 0.0,  #  8: Compute Node: Busy
                 age + 1.0,  #  9: Compute Node: Age last started
-                2.0,  # 10: Lost Messages: Count
-                0.0,  # 11: Output: Occupancy
-                0.0,  # 12: Output: Oldest Age
-                0.0,  # 13: Output: Youngest Age
-                0.0,  # 14: Output: Average Age
+                2.0,  # 10: Lost Messages (Buffers): Count
+                0.0,  # 11: Lost Messages (Compute): Count
+                0.0,  # 12: Output: Occupancy
+                0.0,  # 13: Output: Oldest Age
+                0.0,  # 14: Output: Youngest Age
+                0.0,  # 15: Output: Average Age
             ]
         )
         state = np.array(system.state)
@@ -113,11 +115,12 @@ def test_nominal(setup):
                 age,  #  7: Buffer 1: Average Age
                 0.0,  #  8: Compute Node: Busy
                 age,  #  9: Compute Node: Age last started
-                0.0,  # 10: Lost Messages: Count
-                0.0,  # 11: Output: Occupancy
-                0.0,  # 12: Output: Oldest Age
-                0.0,  # 13: Output: Youngest Age
-                0.0,  # 14: Output: Average Age
+                0.0,  # 10: Lost Messages (Buffer): Count
+                0.0,  # 11: Lost Messages (Compute): Count
+                0.0,  # 12: Output: Occupancy
+                0.0,  # 13: Output: Oldest Age
+                0.0,  # 14: Output: Youngest Age
+                0.0,  # 15: Output: Average Age
             ]
         )
         state = np.array(system.state)
@@ -143,11 +146,12 @@ def test_nominal(setup):
                 0.0,  #  7: Buffer 1: Average Age
                 1.0,  #  8: Compute Node: Busy
                 0.01 * (clock.get_time() - 50),  #  9: Compute Node: Age last started
-                0.0,  # 10: Lost Messages: Count
-                0.0,  # 11: Output: Occupancy
-                0.0,  # 12: Output: Oldest Age
-                0.0,  # 13: Output: Youngest Age
-                0.0,  # 14: Output: Average Age
+                0.0,  # 10: Lost Messages (Buffer): Count
+                0.0,  # 11: Lost Messages (Compute): Count
+                0.0,  # 12: Output: Occupancy
+                0.0,  # 13: Output: Oldest Age
+                0.0,  # 14: Output: Youngest Age
+                0.0,  # 15: Output: Average Age
             ]
         )
         state = np.array(system.state)
@@ -170,11 +174,12 @@ def test_nominal(setup):
                 0.0,  #  7: Buffer 1: Average Age
                 0.0,  #  8: Compute Node: Busy
                 0.01 * (clock.get_time() - 50),  #  9: Compute Node: Age last started
-                0.0,  # 10: Lost Messages: Count
-                1.0,  # 11: Output: Occupancy
-                0.01 * clock.get_time(),  # 12: Output: Oldest Age
-                0.01 * clock.get_time(),  # 13: Output: Youngest Age
-                0.01 * clock.get_time(),  # 14: Output: Average Age
+                0.0,  # 10: Lost Messages (Buffer): Count
+                0.0,  # 11: Lost Messages (Compute): Count
+                1.0,  # 12: Output: Occupancy
+                0.01 * clock.get_time(),  # 13: Output: Oldest Age
+                0.01 * clock.get_time(),  # 14: Output: Youngest Age
+                0.01 * clock.get_time(),  # 15: Output: Average Age
             ]
         )
         state = np.array(system.state)
