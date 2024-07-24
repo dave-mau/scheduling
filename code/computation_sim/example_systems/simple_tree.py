@@ -82,6 +82,7 @@ class SimpleTreeBuilder(SystemBuidler):
             self._nodes[f"BUFFER_{i}"].set_overflow_output(self._nodes["LOST_BUFFER"])
             compute_action.register_callback(self._nodes[f"BUFFER_{i}"].trigger, 1)
         compute_action.register_callback(self._nodes["COMPUTE"].trigger, 0)
+        compute_action.register_readiness_callback(lambda: not self._nodes["COMPUTE"].is_busy)
 
         self._system = System()
         self._system.add_action(compute_action)
