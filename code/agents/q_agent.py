@@ -27,7 +27,6 @@ class DQNActor(object):
     ):
         self.num_states = num_states
         self.num_actions = num_actions
-        self.num_outputs = num_actions + 1
         self.batch_size = batch_size
         self.gamma = gamma
 
@@ -38,8 +37,8 @@ class DQNActor(object):
         self.tau = tau
         self.lr = lr
 
-        self.policy_net = DQN(num_states, self.num_outputs).to(device)
-        self.target_net = DQN(num_states, self.num_outputs).to(device)
+        self.policy_net = DQN(num_states, self.num_actions).to(device)
+        self.target_net = DQN(num_states, self.num_actions).to(device)
         self.target_net.load_state_dict(self.policy_net.state_dict())
 
         self.optimizer = optim.AdamW(self.policy_net.parameters(), lr=self.lr, amsgrad=True)
@@ -62,13 +61,14 @@ class DQNActor(object):
 
     def greedy(self, state) -> int:
         with torch.no_grad():
-            return self.policy_net(state).argmax()
+            return self.policy_net(state).argmax().item()
 
     def epsilon_greedy(self, state) -> int:
         if random.random() > self.get_epsilon():
-            return self.greedy(state).item()
+            return self.greedy(state)
         else:
-            return random.randint(0, self.num_actions)
+            # randint includes upper interval bound; need to subtract 1
+            return random.randint(0, self.num_actions - 1)
 
     def push_memory(self, state, action, next_state, reward):
         self.experience_count += 1
