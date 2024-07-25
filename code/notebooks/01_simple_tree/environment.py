@@ -69,7 +69,7 @@ class TreeEnv(gym.Env):
             sink.reset()
 
         # Get the action vector from the action id
-        action = unpack_action(action) 
+        action = unpack_action(self.system.num_action, action)
         self.system.act(action)
         self.clock += self.dt
         self.system.update()
