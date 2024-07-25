@@ -35,16 +35,16 @@ class Action(object):
         self._callbacks.clear()
 
 def max_action_id(num_action_dims: int) -> int:
-    """ Returns the largest common action id, given a number of individual actions.
+    """ Returns the largest possible action id, given the size of the action vector.
 
-    For example, given a 3D action vector , the largest action vector is ([1, 1, 1]), which is 7 in decimal.
+    For example, given a 3D action vector, the largest action vector is ([1, 1, 1]), which is 7 in decimal.
     """
     return 2**num_action_dims - 1
 
 def num_actions(num_action_dims: int) -> int:
-    """ Returns the number of common actions, given a number of individual actions.
+    """ Returns the number of possible actions, given the size of the action vector.
 
-    For example, given a three individual actions, there are 8 possible combinations.
+    For example, given a three dimensional action vector, there are 8 possible combinations.
     """
     if num_action_dims > 0:
         return max_action_id(num_action_dims) + 1
@@ -52,7 +52,7 @@ def num_actions(num_action_dims: int) -> int:
         return 0
 
 def unpack_action(num_action_dims: int, action: int) -> np.ndarray:
-    """ Given a a packed action `action`, convert it into its binary form.
+    """ Given a a packed action `action`, convert it into its unpacked form.
 
     Example:
         ```
