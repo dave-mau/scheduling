@@ -1,9 +1,9 @@
 import gymnasium as gym
 import numpy as np
 from computation_sim.basic_types import Time
-from computation_sim.system import num_actions, unpack_action
 from computation_sim.example_systems import SimpleTreeBuilder
 from computation_sim.nodes import ConstantNormalizer
+from computation_sim.system import num_actions, unpack_action
 from computation_sim.time import (
     Clock,
     GammaDistributionSampler,
@@ -84,9 +84,15 @@ class TreeEnv(gym.Env):
         )
         reward = -self.cost_message_loss * info["total_message_losses"]
         if self._output.last_received:
-            info["last_output_max_age"]= as_age(self._output.last_received.header.t_measure_oldest, self.clock.get_time())
-            info["last_output_min_age"]= as_age(self._output.last_received.header.t_measure_youngest, self.clock.get_time())
-            info["last_output_avg_age"]= as_age(self._output.last_received.header.t_measure_average, self.clock.get_time())
+            info["last_output_max_age"] = as_age(
+                self._output.last_received.header.t_measure_oldest, self.clock.get_time()
+            )
+            info["last_output_min_age"] = as_age(
+                self._output.last_received.header.t_measure_youngest, self.clock.get_time()
+            )
+            info["last_output_avg_age"] = as_age(
+                self._output.last_received.header.t_measure_average, self.clock.get_time()
+            )
             reward -= self.cost_output_time * float(info["last_output_max_age"])
         reward -= self.cost_input * np.sum(action)
 

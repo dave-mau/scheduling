@@ -6,6 +6,7 @@ import torch
 
 Sample = namedtuple("Sample", ("s", "a", "s_prime", "r"))
 
+
 class Memory(object):
     def __init__(self, capacity: int):
         self._memory = deque([], capacity)
