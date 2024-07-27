@@ -77,23 +77,19 @@ class TreeEnv(gym.Env):
 
         # Build the reward
         info = dict(
-            total_message_losses=float(self._count_lost_msgs()),
-            last_output_min_age=0,
-            last_output_max_age=0,
-            last_output_avg_age=0,
+            lost_messages=float(self._count_lost_msgs()),
+            output_age_min=0,
+            output_age_max=0,
+            output_age_avg=0,
         )
-        reward = -self.cost_message_loss * info["total_message_losses"]
+        reward = -self.cost_message_loss * info["lost_messages"]
         if self._output.last_received:
-            info["last_output_max_age"] = as_age(
-                self._output.last_received.header.t_measure_oldest, self.clock.get_time()
-            )
-            info["last_output_min_age"] = as_age(
+            info["output_age_max"] = as_age(self._output.last_received.header.t_measure_oldest, self.clock.get_time())
+            info["output_age_min"] = as_age(
                 self._output.last_received.header.t_measure_youngest, self.clock.get_time()
             )
-            info["last_output_avg_age"] = as_age(
-                self._output.last_received.header.t_measure_average, self.clock.get_time()
-            )
-            reward -= self.cost_output_time * float(info["last_output_max_age"])
+            info["output_age_avg"] = as_age(self._output.last_received.header.t_measure_average, self.clock.get_time())
+            reward -= self.cost_output_time * float(info["output_age_max"])
         reward -= self.cost_input * np.sum(action)
 
         return state, reward, False, False, info
