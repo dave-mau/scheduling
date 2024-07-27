@@ -1,6 +1,8 @@
-name: timesync-prototype
+name: scheduling-env
 channels:
-  - defaults
+  - pytorch
+  - nvidia
+  - defaults 
 dependencies:
   - python=3.10
   - pytorch
@@ -28,4 +30,3 @@ dependencies:
   - isort
   - plotly
   - conda-forge::python-kaleido
-prefix: /home/davidmauderli/.conda/envs/timesync-prototype
