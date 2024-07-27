@@ -20,6 +20,7 @@ class TreeEnv(gym.Env):
         cost_message_loss=1.0,
         cost_output_time=0.1,
         cost_input=0.01,
+        filter_threshold=np.inf,
     ):
         # Store init params
         self.clock = Clock(0)
@@ -34,8 +35,9 @@ class TreeEnv(gym.Env):
         builder.sensor_disturbances = [GaussianTimeSampler(0.0, 1.0, 5.0, 100.0) for _ in range(num_sensors)]
         builder.sensor_epochs = [0 for _ in range(num_sensors)]
         builder.sensor_periods = [100 for _ in range(num_sensors)]
-        builder.compute_duration = GammaDistributionSampler(5.0, 1.0, 3.0, 70.0)
+        builder.compute_duration = GammaDistributionSampler(5.0, 1.0, 2.5, 70.0)
         builder.age_normalizer = self.age_normalizer
+        builder.filter_threshold = filter_threshold
         builder.build()
         self.system = builder.system
 
@@ -43,6 +45,9 @@ class TreeEnv(gym.Env):
         self.system.update()
         self._sinks = [builder.nodes["LOST_BUFFER"], builder.nodes["LOST_COMPUTE"]]
         self._output = builder.nodes["OUTPUT"]
+
+        # Keep nodes as an easy entry point for experiments
+        self.nodes = builder.nodes
 
         # Set dimensionality of action / observation spaces
         self.action_space = gym.spaces.Discrete(num_actions(self.system.num_action))
@@ -54,13 +59,17 @@ class TreeEnv(gym.Env):
     def time(self) -> Time:
         return self.clock.get_time()
 
+    @property
+    def state(self) -> np.ndarray:
+        return np.array(self.system.state).flatten()
+
     def reset(self, seed=None):
         super().reset(seed=seed)
         np.random.seed(seed)
         self.clock.reset()
         self.system.reset()
         self.system.update()
-        return np.array(self.system.state).flatten(), {}
+        return self.state, {}
 
     def step(self, action: int):
         # Reset the sinks that count number of lost messages
@@ -73,7 +82,6 @@ class TreeEnv(gym.Env):
         self.system.act(action)
         self.clock += self.dt
         self.system.update()
-        state = np.array(self.system.state).flatten()
 
         # Build the reward
         info = dict(
@@ -92,7 +100,7 @@ class TreeEnv(gym.Env):
             reward -= self.cost_output_time * float(info["output_age_max"])
         reward -= self.cost_input * np.sum(action)
 
-        return state, reward, False, False, info
+        return self.state, reward, False, False, info
 
     def _count_lost_msgs(self) -> int:
         return sum(len(sink.received_messages) for sink in self._sinks)

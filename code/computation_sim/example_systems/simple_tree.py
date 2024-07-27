@@ -13,6 +13,7 @@ from computation_sim.nodes import (
 )
 from computation_sim.system import Action, System, SystemBuidler
 from computation_sim.time import Clock, DurationSampler
+from numpy import inf
 
 
 class SimpleTreeBuilder(SystemBuidler):
@@ -26,6 +27,7 @@ class SimpleTreeBuilder(SystemBuidler):
         age_normalizer: StateVariableNormalizer = None,
         occupancy_normalizer: StateVariableNormalizer = None,
         count_normalizer: StateVariableNormalizer = None,
+        filter_threshold: float = inf,
     ):
         self.clock = clock
         self._system = None
@@ -37,6 +39,7 @@ class SimpleTreeBuilder(SystemBuidler):
         self.age_normalizer = age_normalizer
         self.occupancy_normalizer = occupancy_normalizer
         self.count_normalizer = count_normalizer
+        self.filter_threshold = filter_threshold
 
     def build(self) -> None:
         assert len(self.sensor_epochs) == len(self.sensor_periods)
@@ -60,6 +63,7 @@ class SimpleTreeBuilder(SystemBuidler):
             id="COMPUTE",
             age_normalizer=self.age_normalizer,
             occupancy_normalizer=self.occupancy_normalizer,
+            filter_threshold=self.filter_threshold,
         )
         self._nodes["COMPUTE"].set_output_pass(self._nodes["OUTPUT"])
         self._nodes["COMPUTE"].set_output_fail(self._nodes["LOST_COMPUTE"])

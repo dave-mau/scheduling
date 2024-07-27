@@ -20,12 +20,14 @@ class OutputNode(Node):
     ):
         super().__init__(time_provider, id)
         self._receive_cb = receive_cb
+        self._last_receive_time = None
         self._last_received = None
         self._age_normalizer = age_normalizer if age_normalizer else ConstantNormalizer(1.0)
         self._occupancy_normalizer = occupancy_normalizer if occupancy_normalizer else ConstantNormalizer(1.0)
 
     def receive(self, message: Message) -> None:
         self._last_received = deepcopy(message)
+        self._last_receive_time = self.time
         if self._receive_cb:
             self._receive_cb(message)
 
@@ -42,8 +44,12 @@ class OutputNode(Node):
     @property
     def draw_options(self) -> dict:
         state = self.state
+
+        color = "dimgrey"
+        if self._last_received:
+            color = "floralwhite" if self._last_receive_time == self.time else "lightgrey"
         return dict(
-            color="dimgrey" if self._last_received else "floralwhite",
+            color=color,
             symbol="circle",
             hovertext=f"is_occupied = {state[0]}<br>msg.age_oldest = {state[1]}<br>msg.age_youngest = {state[2]}<br>msg.age_average = {state[3]}",
         )

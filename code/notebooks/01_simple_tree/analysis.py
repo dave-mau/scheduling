@@ -37,6 +37,8 @@ class DataLogger(object):
         self.loss = list()
         self.epsilon = list()
 
+        self.iteration = 0
+
     def check_write_tensorboard(self) -> bool:
         return (
             (self.tensorboard_writer is not None)
@@ -68,14 +70,15 @@ class DataLogger(object):
         self.loss.append(metrics.loss)
         self.epsilon.append(metrics.epsilon)
 
-    def write_to_tensorboard(self, iteration: int):
+    def write_to_tensorboard(self):
+        self.iteration += 1
         if self.tensorboard_writer is None:
             return
         if len(self.sys_time) == 0:
             return
         if len(self.learn_time) == 0:
             return
-        if (iteration % self.tensorboard_period) != 0:
+        if (self.iteration % self.tensorboard_period) != 0:
             return
         self.tensorboard_writer.add_scalar("system/lost_messages", self.mt_lost_messages.value, self.sys_time[-1])
         self.tensorboard_writer.add_scalar("system/output_age_min", self.ma_output_age_min.value, self.sys_time[-1])

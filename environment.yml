@@ -27,4 +27,5 @@ dependencies:
   - pytest
   - isort
   - plotly
+  - conda-forge::python-kaleido
 prefix: /home/davidmauderli/.conda/envs/timesync-prototype
