@@ -20,7 +20,7 @@ class TreeEnv(gym.Env):
         cost_message_loss=1.0,
         cost_output_time=0.1,
         cost_input=0.01,
-        filter_threshold = np.inf
+        filter_threshold=np.inf,
     ):
         # Store init params
         self.clock = Clock(0)

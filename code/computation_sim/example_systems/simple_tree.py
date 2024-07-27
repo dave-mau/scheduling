@@ -1,5 +1,4 @@
 from typing import List
-from numpy import inf
 
 from computation_sim.basic_types import Time
 from computation_sim.nodes import (
@@ -14,6 +13,7 @@ from computation_sim.nodes import (
 )
 from computation_sim.system import Action, System, SystemBuidler
 from computation_sim.time import Clock, DurationSampler
+from numpy import inf
 
 
 class SimpleTreeBuilder(SystemBuidler):
