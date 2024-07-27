@@ -1,7 +1,11 @@
+import pathlib
+from io import BytesIO
 from typing import Tuple
 
+import imageio
 import networkx as nx
 import plotly.graph_objects as go
+from PIL import Image
 
 
 def default_layout() -> dict:
@@ -99,3 +103,20 @@ class SystemDrawer(object):
 
         common_keys = set.intersection(*map(set, opts))
         return {k: [dic[k] for dic in opts] for k in common_keys}
+
+
+class GifCreator:
+    def __init__(self):
+        self.frames = []
+
+    def update(self, drawer: SystemDrawer):
+        self.frames.append(self._to_image(drawer))
+
+    def _to_image(self, drawer: SystemDrawer) -> Image.Image:
+        return Image.open(BytesIO(drawer.fw.to_image(format="jpg")))
+
+    def save(self, path: pathlib.Path, fps: int = 10):
+        imageio.mimsave(str(path), self.frames, fps=fps, loop=0)
+
+    def reset(self):
+        self.frames = []

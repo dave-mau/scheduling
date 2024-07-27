@@ -34,13 +34,11 @@ class DQNActor(object):
         self.epsilon_end = epsilon_end
         self.epsilon_decay = epsilon_decay
 
-        self.num_states = num_states
-        self.num_actions = num_actions
         self.tau = tau
         self.lr = lr
 
-        self.policy_net = DQN(num_states, num_actions).to(device)
-        self.target_net = DQN(num_states, num_actions).to(device)
+        self.policy_net = DQN(num_states, self.num_actions).to(device)
+        self.target_net = DQN(num_states, self.num_actions).to(device)
         self.target_net.load_state_dict(self.policy_net.state_dict())
 
         self.optimizer = optim.AdamW(self.policy_net.parameters(), lr=self.lr, amsgrad=True)
@@ -63,12 +61,13 @@ class DQNActor(object):
 
     def greedy(self, state) -> int:
         with torch.no_grad():
-            return self.policy_net(state).argmax()
+            return self.policy_net(state).argmax().item()
 
     def epsilon_greedy(self, state) -> int:
         if random.random() > self.get_epsilon():
-            return self.greedy(state).item()
+            return self.greedy(state)
         else:
+            # randint includes upper interval bound; need to subtract 1
             return random.randint(0, self.num_actions - 1)
 
     def push_memory(self, state, action, next_state, reward):
@@ -111,4 +110,4 @@ class DQNActor(object):
             ] + self.tau * policy_net_state_dict[key]
         self.target_net.load_state_dict(target_net_state_dict)
 
-        return {"loss": loss, "epsilon": self.get_epsilon()}
+        return {"loss": loss.cpu().item(), "epsilon": self.get_epsilon()}
