@@ -110,4 +110,4 @@ class DQNActor(object):
             ] + self.tau * policy_net_state_dict[key]
         self.target_net.load_state_dict(target_net_state_dict)
 
-        return {"loss": loss, "epsilon": self.get_epsilon()}
+        return {"loss": loss.cpu().item(), "epsilon": self.get_epsilon()}
