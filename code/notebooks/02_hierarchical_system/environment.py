@@ -12,7 +12,7 @@ from computation_sim.time import (
 from system import HierarchicalSystemBuilder
 
 
-class HierarchicalSystem(gym.Env):
+class MultiStageEnv(gym.Env):
     def __init__(
         self,
         dt: Time = 10,
@@ -107,7 +107,7 @@ class HierarchicalSystem(gym.Env):
         m.append(builder.add_edge_compute("3", e3, GammaDistributionSampler(5.0, 1.0, 2.5, 50.0), 100.0))
 
         # Set-up the output node
-        builder.add_output_compute(m, 100.0)
+        builder.add_output_compute(m, GammaDistributionSampler(5.0, 1.0, 2.5, 60.0), 100.0)
         builder.build()
 
         self.system = builder.system

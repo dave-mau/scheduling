@@ -182,5 +182,7 @@ class HierarchicalSystemBuilder(SystemBuidler):
     def build(self) -> None:
         # Build the system
         self._system = System()
-        self._system.add_action(action for action in self._actions)
-        self._system.add_node(node for node in self._nodes.values())
+        for action in self._actions:
+            self._system.add_action(action)
+        for node in self._nodes.values():
+            self._system.add_node(node)
