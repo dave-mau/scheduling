@@ -178,3 +178,9 @@ class HierarchicalSystemBuilder(SystemBuidler):
         action.register_callback(compute_node.trigger, 0)
         action.register_readiness_callback(lambda: not compute_node.is_busy)
         self._actions.append(action)
+
+    def build(self) -> None:
+        # Build the system
+        self._system = System()
+        self._system.add_action(action for action in self._actions)
+        self._system.add_node(node for node in self._nodes.values())
