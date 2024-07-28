@@ -1,5 +1,5 @@
 from collections import deque
-from typing import Generator, List, Optional
+from typing import Callable, Generator, List, Optional
 
 from computation_sim.basic_types import BadNodeGraphError, Message, NodeId
 from computation_sim.time import TimeProvider
@@ -24,15 +24,21 @@ class RingBufferNode(Node):
         self._occupancy_normalizer = occupancy_normalizer if occupancy_normalizer else ConstantNormalizer(1.0)
         self._output = None
         self._overflow_output = None
+        self._receive_cb = None
 
     @property
     def outputs(self) -> List[Node]:
         return [self._output, self._overflow_output]
 
+    def set_receive_cb(self, cl: Callable[["RingBufferNode"], None]):
+        self._receive_cb = cl
+
     def receive(self, message: Message) -> None:
         if self._overflow_output and (self.num_entries == self._buffer.maxlen):
             self._overflow_output.receive(self._buffer.popleft())
         self._buffer.append(message)
+        if self._receive_cb:
+            self._receive_cb(self)
 
     def generate_state(self) -> Generator[float, None, None]:
         # Write non-empty elements
