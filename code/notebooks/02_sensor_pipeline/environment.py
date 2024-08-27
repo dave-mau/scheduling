@@ -2,39 +2,30 @@ import gymnasium as gym
 import numpy as np
 from computation_sim.basic_types import Time
 from computation_sim.nodes import ConstantNormalizer, SinkNode, OutputNode
-from computation_sim.system import num_actions, unpack_action
-from computation_sim.time import (
-    Clock,
-    GammaDistributionSampler,
-    GaussianTimeSampler,
-    as_age,
-)
-from system import HierarchicalSystemBuilder
-from typing import List
+from computation_sim.system import num_actions, unpack_action, System
+from computation_sim.time import Clock
+from typing import List, Callable, Dict, Tuple
 
 
 class MultiStageEnv(gym.Env):
     def __init__(
         self,
         clock: Clock,
-        system: HierarchicalSystemBuilder,
+        system: System,
         sinks: List[SinkNode],
         output: OutputNode,
+        compute_reward:Callable[["MultiStageEnv", np.ndarray], Tuple[float, Dict]],
         dt: Time = 10,
-        cost_message_loss=1.0,
-        cost_output_time=0.1,
-        cost_input=0.01,
+        
     ):
         # Store init params
-        self.clock = clock
-        self.system = system
-        self.sinks = sinks
-        self.output = output
+        self.clock: Clock = clock
+        self.system: System = system
+        self.sinks: List[SinkNode] = sinks
+        self.output: OutputNode = output
         
         self.dt = dt
-        self.cost_message_loss = cost_message_loss
-        self.cost_output_time = cost_output_time
-        self.cost_input = cost_input
+        self.compute_reward = compute_reward
 
         # Build system
         self.age_normalizer = ConstantNormalizer(100.0)
@@ -76,30 +67,8 @@ class MultiStageEnv(gym.Env):
         self.system.update()
 
         # Build the reward
-        info = dict(
-            lost_messages=float(self._count_lost_msgs()),
-            output_age_min=0,
-            output_age_max=0,
-            output_age_avg=0,
-        )
-        reward = -self.cost_message_loss * info["lost_messages"]
-        if self._output.last_received:
-            info["output_age_max"] = as_age(
-                self._output.last_received.header.t_measure_oldest,
-                self.clock.get_time(),
-            )
-            info["output_age_min"] = as_age(
-                self._output.last_received.header.t_measure_youngest,
-                self.clock.get_time(),
-            )
-            info["output_age_avg"] = as_age(
-                self._output.last_received.header.t_measure_average,
-                self.clock.get_time(),
-            )
-            reward -= self.cost_output_time * float(info["output_age_max"])
-        reward -= self.cost_input * np.sum(action)
-
+        reward, info = self.compute_reward(action)
         return self.state, reward, False, False, info
 
     def _count_lost_msgs(self) -> int:
-        return sum(len(sink.received_messages) for sink in self.sinks)
+        return 

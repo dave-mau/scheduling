@@ -16,7 +16,7 @@ from computation_sim.system import Action, System, SystemBuidler
 from computation_sim.time import Clock, DurationSampler
 
 
-class HierarchicalSystemBuilder(SystemBuidler):
+class ThreeStageSystemBuilder(SystemBuidler):
     def __init__(
         self,
         clock: Clock,
