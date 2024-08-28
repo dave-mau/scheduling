@@ -30,3 +30,4 @@ dependencies:
   - isort>=5.13
   - plotly>=5.22
   - conda-forge::python-kaleido>=0.2
+  - conda-forge::stable-baselines3
