@@ -1,6 +1,6 @@
 import pytest
 from computation_sim.basic_types import Header
-from computation_sim.nodes import header_to_state, empty_message_state
+from computation_sim.nodes import empty_message_state, header_to_state
 
 
 def test_header_to_state_pass():
@@ -10,6 +10,7 @@ def test_header_to_state_pass():
     result[1] == pytest.approx(2.0, 1.0e-6)
     result[2] == pytest.approx(1.0, 1.0e-6)
     result[3] == pytest.approx(11.0, 1.0e-6)
+
 
 def test_empty_message_state_pass():
     result = empty_message_state()
