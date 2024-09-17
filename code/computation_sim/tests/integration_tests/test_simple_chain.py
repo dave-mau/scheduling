@@ -31,13 +31,13 @@ def test_no_action_no_output(setup):
 def test_nominal(setup):
     system, clock, nodes = setup
     # state vector:
-    # [compute_busy, clock-time, output has result, ..output-times.., sink-count]
+    # [compute_busy, clock-time, num accepted inputs, num measurements total, output has result, ..output-times.., output-num-measurements, sink-count]
 
     # t: [0, 50) -- Wait and do nothing
     while clock.get_time() < 50:
         system.update()
         np.testing.assert_allclose(
-            [0.0, float(clock.get_time()), 0.0, 0.0, 0.0, 0.0, 0.0],
+            [0.0, float(clock.get_time()), 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
             np.array(system.state),
             rtol=1.0e-6,
             atol=1.0e-6,
@@ -52,7 +52,7 @@ def test_nominal(setup):
     while clock.get_time() < 60:
         system.update()
         np.testing.assert_allclose(
-            [1.0, float(clock.get_time() - 50), 0.0, 0.0, 0.0, 0.0, 0.0],
+            [1.0, float(clock.get_time() - 50), 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
             np.array(system.state),
             rtol=1.0e-6,
             atol=1.0e-6,
@@ -63,7 +63,7 @@ def test_nominal(setup):
     # t = 60 -- OUTPUT RECEIVED
     system.update()
     np.testing.assert_allclose(
-        [0.0, float(clock.get_time() - 50), 1.0, 60.0, 60.0, 60.0, 0.0],
+        [0.0, float(clock.get_time() - 50), 1.0, 1.0, 1.0, 60.0, 60.0, 60.0, 1.0, 0.0],
         np.array(system.state),
         rtol=1.0e-6,
         atol=1.0e-6,
