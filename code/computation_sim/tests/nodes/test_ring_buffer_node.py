@@ -142,18 +142,20 @@ def test_reset(setup_no_outputs):
 def test_state_full_default_normalizer(setup_no_outputs):
     buffer, clock_mock = setup_no_outputs
     clock_mock.time = 6
-    buffer.receive(Message(Header(1, 2, 3)))
-    buffer.receive(Message(Header(4, 5, 6)))
+    buffer.receive(Message(Header(1, 2, 3, 7)))
+    buffer.receive(Message(Header(4, 5, 6, 8)))
 
     result = buffer.generate_state()
     assert next(result) == pytest.approx(1.0, 1.0e-6)
     assert next(result) == pytest.approx(5.0, 1.0e-6)
     assert next(result) == pytest.approx(4.0, 1.0e-6)
     assert next(result) == pytest.approx(3.0, 1.0e-6)
+    assert next(result) == pytest.approx(7.0, 1.0e-6)
     assert next(result) == pytest.approx(1.0, 1.0e-6)
     assert next(result) == pytest.approx(2.0, 1.0e-6)
     assert next(result) == pytest.approx(1.0, 1.0e-6)
     assert next(result) == pytest.approx(0.0, 1.0e-6)
+    assert next(result) == pytest.approx(8.0, 1.0e-6)
     with pytest.raises(StopIteration):
         next(result)
 
@@ -171,6 +173,8 @@ def test_state_empty_default_normalizer(setup_no_outputs):
     assert next(result) == pytest.approx(0.0, 1.0e-6)
     assert next(result) == pytest.approx(0.0, 1.0e-6)
     assert next(result) == pytest.approx(0.0, 1.0e-6)
+    assert next(result) == pytest.approx(0.0, 1.0e-6)
+    assert next(result) == pytest.approx(0.0, 1.0e-6)
     with pytest.raises(StopIteration):
         next(result)
 
@@ -178,13 +182,15 @@ def test_state_empty_default_normalizer(setup_no_outputs):
 def test_state_semifull_default_normalizer(setup_no_outputs):
     buffer, clock_mock = setup_no_outputs
     clock_mock.time = 6
-    buffer.receive(Message(Header(1, 2, 3)))
+    buffer.receive(Message(Header(1, 2, 3, 4)))
 
     result = buffer.generate_state()
     assert next(result) == pytest.approx(1.0, 1.0e-6)
     assert next(result) == pytest.approx(5.0, 1.0e-6)
     assert next(result) == pytest.approx(4.0, 1.0e-6)
     assert next(result) == pytest.approx(3.0, 1.0e-6)
+    assert next(result) == pytest.approx(4.0, 1.0e-6)
+    assert next(result) == pytest.approx(0.0, 1.0e-6)
     assert next(result) == pytest.approx(0.0, 1.0e-6)
     assert next(result) == pytest.approx(0.0, 1.0e-6)
     assert next(result) == pytest.approx(0.0, 1.0e-6)
@@ -200,24 +206,27 @@ def test_state_full_custom_normalizer():
         max_num_elements=2,
         age_normalizer=ConstantNormalizer(10.0),
         occupancy_normalizer=ConstantNormalizer(2.0),
+        count_normalizer=ConstantNormalizer(0.1),
     )
 
     clock_mock.time = 6
-    buffer.receive(Message(Header(1, 2, 3)))
-    buffer.receive(Message(Header(4, 5, 6)))
+    buffer.receive(Message(Header(1, 2, 3, 7)))
+    buffer.receive(Message(Header(4, 5, 6, 8)))
 
     result = buffer.generate_state()
     assert next(result) == pytest.approx(0.5, 1.0e-6)
     assert next(result) == pytest.approx(0.5, 1.0e-6)
     assert next(result) == pytest.approx(0.4, 1.0e-6)
     assert next(result) == pytest.approx(0.3, 1.0e-6)
+    assert next(result) == pytest.approx(70.0, 1.0e-6)
     assert next(result) == pytest.approx(0.5, 1.0e-6)
     assert next(result) == pytest.approx(0.2, 1.0e-6)
     assert next(result) == pytest.approx(0.1, 1.0e-6)
     assert next(result) == pytest.approx(0.0, 1.0e-6)
+    assert next(result) == pytest.approx(80.0, 1.0e-6)
     with pytest.raises(StopIteration):
         next(result)
-    assert len(buffer.state) == 8
+    assert len(buffer.state) == 10
 
 
 def test_receive_cb_enabled(setup_outputs):
