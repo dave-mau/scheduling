@@ -54,21 +54,30 @@ def test_empty_inputs(request, fixture):
     node, clock_mock, sampler_mock, recv_pass_mock, recv_fail_mock = fixture_value
 
     # Check initial state
+    assert len(node.state) == 4
     assert node.state[0] == pytest.approx(0.0, 1.0e-6)
     assert node.state[1] == pytest.approx(0.0, 1.0e-6)
+    assert node.state[2] == pytest.approx(0.0, 1.0e-6)
+    assert node.state[3] == pytest.approx(0.0, 1.0e-6)
     assert not node.is_busy
 
     # Trigger: Check state again
     node.trigger()
+    assert len(node.state) == 4
     assert node.state[0] == pytest.approx(0.0, 1.0e-6)
     assert node.state[1] == pytest.approx(0.0, 1.0e-6)
+    assert node.state[2] == pytest.approx(0.0, 1.0e-6)
+    assert node.state[3] == pytest.approx(0.0, 1.0e-6)
     assert not node.is_busy
 
     # Advance time, update, check state again
     clock_mock.time += 1
     node.update()
+    assert len(node.state) == 4
     assert node.state[0] == pytest.approx(0.0, 1.0e-6)
     assert node.state[1] == pytest.approx(1.0, 1.0e-6)
+    assert node.state[2] == pytest.approx(0.0, 1.0e-6)
+    assert node.state[3] == pytest.approx(0.0, 1.0e-6)
     assert not node.is_busy
 
     # Assert nothing was sent to any of the receivers
@@ -88,8 +97,11 @@ def test_single_input_single_trigger(setup_empty_with_outputs):
     node.receive(msg)
 
     # Check initial state
+    assert len(node.state) == 4
     assert node.state[0] == pytest.approx(0.0, 1.0e-6)
     assert node.state[1] == pytest.approx(0.0, 1.0e-6)
+    assert node.state[2] == pytest.approx(0.0, 1.0e-6)
+    assert node.state[3] == pytest.approx(0.0, 1.0e-6)
     assert not node.is_busy
     recv_pass_mock.receive.assert_not_called()
     recv_fail_mock.receive.assert_not_called()
@@ -99,8 +111,11 @@ def test_single_input_single_trigger(setup_empty_with_outputs):
     node.update()
 
     # Nothing was triggered; Check that nothing changed on the state
+    assert len(node.state) == 4
     assert node.state[0] == pytest.approx(0.0, 1.0e-6)
     assert node.state[1] == pytest.approx(10.0, 1.0e-6)
+    assert node.state[2] == pytest.approx(0.0, 1.0e-6)
+    assert node.state[3] == pytest.approx(0.0, 1.0e-6)
     assert not node.is_busy
     recv_pass_mock.receive.assert_not_called()
     recv_fail_mock.receive.assert_not_called()
@@ -110,8 +125,11 @@ def test_single_input_single_trigger(setup_empty_with_outputs):
 
     # Increment time and check state
     for i in range(5):
+        assert len(node.state) == 4
         assert node.state[0] == pytest.approx(1.0, 1.0e-6)
         assert node.state[1] == pytest.approx(float(i), 1.0e-6)
+        assert node.state[2] == pytest.approx(1.0, 1.0e-6)
+        assert node.state[3] == pytest.approx(5.0, 1.0e-6)
         assert node.is_busy
         recv_pass_mock.receive.assert_not_called()
         recv_fail_mock.receive.assert_not_called()
@@ -119,8 +137,11 @@ def test_single_input_single_trigger(setup_empty_with_outputs):
         clock_mock.time += 1
         node.update()
 
+    assert len(node.state) == 4
     assert node.state[0] == pytest.approx(0.0, 1.0e-6)
     assert node.state[1] == pytest.approx(float(5), 1.0e-6)
+    assert node.state[2] == pytest.approx(1.0, 1.0e-6)
+    assert node.state[3] == pytest.approx(5.0, 1.0e-6)
     assert not node.is_busy
     recv_pass_mock.receive.assert_called()
     recv_fail_mock.receive.assert_not_called()
