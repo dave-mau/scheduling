@@ -72,8 +72,10 @@ class RingBufferNode(Node):
             color = "darkorange"
         hovertext = ""
         state = self.state
-        for occupied, oldest, youngest, average in zip(state[0::4], state[1::4], state[2::4], state[3::4]):
-            hovertext += f"is_occupied = {occupied}<br>msg.age_oldest = {oldest}<br>msg.age_youngest = {youngest}<br>msg.age_average = {average}<br>"
+        for occupied, oldest, youngest, average, num in zip(
+            state[0::5], state[1::5], state[2::5], state[3::5], state[4::5]
+        ):
+            hovertext += f"is_occupied = {occupied}<br>msg.age_oldest = {oldest}<br>msg.age_youngest = {youngest}<br>msg.age_average = {average}<br>msg.num_measurements = {num}<br>"
 
         return dict(
             color=color,

@@ -59,7 +59,7 @@ class OutputNode(Node):
         return dict(
             color=color,
             symbol="circle",
-            hovertext=f"is_occupied = {state[0]}<br>msg.age_oldest = {state[1]}<br>msg.age_youngest = {state[2]}<br>msg.age_average = {state[3]}",
+            hovertext=f"is_occupied = {state[0]}<br>msg.age_oldest = {state[1]}<br>msg.age_youngest = {state[2]}<br>msg.age_average = {state[3]}<br>msg.num_measurements = {state[4]}<br>",
         )
 
     @property
