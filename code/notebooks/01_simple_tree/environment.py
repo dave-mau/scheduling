@@ -92,11 +92,18 @@ class TreeEnv(gym.Env):
         )
         reward = -self.cost_message_loss * info["lost_messages"]
         if self._output.last_received:
-            info["output_age_max"] = as_age(self._output.last_received.header.t_measure_oldest, self.clock.get_time())
-            info["output_age_min"] = as_age(
-                self._output.last_received.header.t_measure_youngest, self.clock.get_time()
+            info["output_age_max"] = as_age(
+                self._output.last_received.header.t_measure_oldest,
+                self.clock.get_time(),
             )
-            info["output_age_avg"] = as_age(self._output.last_received.header.t_measure_average, self.clock.get_time())
+            info["output_age_min"] = as_age(
+                self._output.last_received.header.t_measure_youngest,
+                self.clock.get_time(),
+            )
+            info["output_age_avg"] = as_age(
+                self._output.last_received.header.t_measure_average,
+                self.clock.get_time(),
+            )
             reward -= self.cost_output_time * float(info["output_age_max"])
         reward -= self.cost_input * np.sum(action)
 

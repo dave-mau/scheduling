@@ -11,7 +11,12 @@ LearningMetrics = namedtuple("Metrics", ["loss", "epsilon", "reward"])
 
 
 class DataLogger(object):
-    def __init__(self, window_size: int = 100, tensorboard_writer: SummaryWriter = None, tensorboard_period: int = 10):
+    def __init__(
+        self,
+        window_size: int = 100,
+        tensorboard_writer: SummaryWriter = None,
+        tensorboard_period: int = 10,
+    ):
         self.window_size = window_size
         self.tensorboard_writer = tensorboard_writer
         self.tensorboard_period = tensorboard_period

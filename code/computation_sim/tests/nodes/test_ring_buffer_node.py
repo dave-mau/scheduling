@@ -218,3 +218,20 @@ def test_state_full_custom_normalizer():
     with pytest.raises(StopIteration):
         next(result)
     assert len(buffer.state) == 8
+
+
+def test_receive_cb_enabled(setup_outputs):
+    buffer, clock_mock, output_mock, overflow_mock = setup_outputs
+    buffer.set_receive_cb(lambda node: node.trigger())
+
+    buffer.receive(Mock())
+    assert output_mock.receive.call_count == 1
+    assert overflow_mock.receive.call_count == 0
+
+
+def test_receive_cb_disabled(setup_outputs):
+    buffer, clock_mock, output_mock, overflow_mock = setup_outputs
+
+    buffer.receive(Mock())
+    assert output_mock.receive.call_count == 0
+    assert overflow_mock.receive.call_count == 0
