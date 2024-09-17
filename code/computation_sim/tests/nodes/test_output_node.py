@@ -30,21 +30,26 @@ def test_state_has_output():
         clock_mock,
         age_normalizer=ConstantNormalizer(10.0),
         occupancy_normalizer=ConstantNormalizer(0.1),
+        count_normalizer=ConstantNormalizer(0.01),
     )
-    node.receive(Message(Header(1, 2, 3), "foo"))
+    node.receive(Message(Header(1, 2, 3, 4), "foo"))
 
     state = node.state
+    assert len(state) == 5
     assert state[0] == pytest.approx(10.0, 1.0e-6)
     assert state[1] == pytest.approx(0.9, 1.0e-6)
     assert state[2] == pytest.approx(0.8, 1.0e-6)
     assert state[3] == pytest.approx(0.7, 1.0e-6)
+    assert state[4] == pytest.approx(400, 1.0e-6)
 
     clock_mock.time = 11
     state = node.state
+    assert len(state) == 5
     assert state[0] == pytest.approx(10.0, 1.0e-6)
     assert state[1] == pytest.approx(1.0, 1.0e-6)
     assert state[2] == pytest.approx(0.9, 1.0e-6)
     assert state[3] == pytest.approx(0.8, 1.0e-6)
+    assert state[4] == pytest.approx(400, 1.0e-6)
 
 
 def test_state_has_no_output():
@@ -54,10 +59,12 @@ def test_state_has_no_output():
     node = OutputNode(clock_mock)
 
     state = node.state
+    assert len(node.state) == 5
     assert state[0] == pytest.approx(0.0, 1.0e-6)
     assert state[1] == pytest.approx(0.0, 1.0e-6)
     assert state[2] == pytest.approx(0.0, 1.0e-6)
     assert state[3] == pytest.approx(0.0, 1.0e-6)
+    assert state[4] == pytest.approx(0.0, 1.0e-6)
 
 
 def test_reset():

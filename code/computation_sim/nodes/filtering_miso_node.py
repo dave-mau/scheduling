@@ -18,6 +18,7 @@ class FilteringMISONode(Node):
         filter_threshold=np.inf,
         age_normalizer: StateVariableNormalizer = None,
         occupancy_normalizer: StateVariableNormalizer = None,
+        count_normalizer: StateVariableNormalizer = None,
         receive_cb: Callable[["FilteringMISONode"], None] = None,
     ):
         super().__init__(time_provider, id)
@@ -28,6 +29,7 @@ class FilteringMISONode(Node):
         self._output_fail: Node = None
         self._age_normalizer = age_normalizer if age_normalizer else ConstantNormalizer(1.0)
         self._occupancy_normalizer = occupancy_normalizer if occupancy_normalizer else ConstantNormalizer(1.0)
+        self._count_normalizer = count_normalizer if count_normalizer else ConstantNormalizer(1.0)
         self._receive_cb = receive_cb
         self.reset()
 
@@ -43,13 +45,15 @@ class FilteringMISONode(Node):
     def generate_state(self) -> Generator[float, None, None]:
         yield self._occupancy_normalizer.normalize(float(self.is_busy))
         yield self._age_normalizer.normalize(float(as_age(self._t_start, self.time)))
+        yield self._count_normalizer.normalize(float(self._input_count))
+        yield self._count_normalizer.normalize(float(self._total_measurement_count))
 
     @property
     def draw_options(self) -> dict:
         return dict(
             color="darkred" if self.is_busy else "darkgreen",
             symbol="square",
-            hovertext=f"is_busy = {self._is_busy}<br>t_start_age = {self.state[1]}",
+            hovertext=f"is_busy = {self._is_busy}<br>t_start_age = {self.state[1]}<br>input_count = {self.state[2]}<br>total_measurement_count = {self.state[3]}",
         )
 
     def update(self):
@@ -72,6 +76,7 @@ class FilteringMISONode(Node):
             return
 
         filt_inputs = self._filter_inputs(self._input_messages)
+        self._update_input_filter(filt_inputs)
         self._result = self._compute_result(filt_inputs)
         if self._result:
             # Start task iff there is actually a result
@@ -85,6 +90,8 @@ class FilteringMISONode(Node):
         self._duration: Time = self.time
         self._t_stop: Time = self.time
         self._result = None
+        self._input_count = 0
+        self._total_measurement_count = 0
 
     @property
     def is_busy(self) -> bool:
@@ -132,6 +139,10 @@ class FilteringMISONode(Node):
         self._duration = self._duration_sampler.sample()
         self._t_stop = self._t_start + self._duration
         self._is_busy = True
+
+    def _update_input_filter(self, inputs: List[Message]):
+        self._input_count = len(inputs)
+        self._total_measurement_count = sum(i.header.num_measurements for i in inputs)
 
     def set_receive_cb(self, callback: Callable[["FilteringMISONode"], None]) -> None:
         self._receive_cb = callback

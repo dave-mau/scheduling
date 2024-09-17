@@ -7,4 +7,4 @@ from .ring_buffer_node import RingBufferNode
 from .sink_node import SinkNode
 from .source_node import Sensor, SourceNode
 from .state_normalizers import ConstantNormalizer
-from .utils import header_to_state
+from .utils import empty_message_state, header_to_state

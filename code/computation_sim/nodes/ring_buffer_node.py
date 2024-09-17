@@ -6,7 +6,7 @@ from computation_sim.time import TimeProvider
 
 from .interfaces import Node, StateVariableNormalizer
 from .state_normalizers import ConstantNormalizer
-from .utils import header_to_state
+from .utils import empty_message_state, header_to_state
 
 
 class RingBufferNode(Node):
@@ -17,11 +17,13 @@ class RingBufferNode(Node):
         max_num_elements=1,
         age_normalizer: StateVariableNormalizer = None,
         occupancy_normalizer: StateVariableNormalizer = None,
+        count_normalizer: StateVariableNormalizer = None,
     ):
         super().__init__(time_provider, id)
         self._buffer = deque(maxlen=max_num_elements)
         self._age_normalizer = age_normalizer if age_normalizer else ConstantNormalizer(1.0)
         self._occupancy_normalizer = occupancy_normalizer if occupancy_normalizer else ConstantNormalizer(1.0)
+        self._count_normalizer = count_normalizer if count_normalizer else ConstantNormalizer(1.0)
         self._output = None
         self._overflow_output = None
         self._receive_cb = None
@@ -44,14 +46,21 @@ class RingBufferNode(Node):
         # Write non-empty elements
         for element in self._buffer:
             yield self._occupancy_normalizer.normalize(1.0)
-            for x in header_to_state(element.header, self.time):
-                yield self._age_normalizer.normalize(x)
+            for x in header_to_state(
+                element.header,
+                self.time,
+                age_normalizer=self._age_normalizer,
+                count_normalizer=self._count_normalizer,
+            ):
+                yield x
         # Write empty elements
         for _ in range(self.maxlen - len(self._buffer)):
             yield self._occupancy_normalizer.normalize(0.0)
-            yield self._age_normalizer.normalize(0.0)
-            yield self._age_normalizer.normalize(0.0)
-            yield self._age_normalizer.normalize(0.0)
+            for x in empty_message_state(
+                age_normalizer=self._age_normalizer,
+                count_normalizer=self._count_normalizer,
+            ):
+                yield x
 
     @property
     def draw_options(self) -> dict:
@@ -63,8 +72,10 @@ class RingBufferNode(Node):
             color = "darkorange"
         hovertext = ""
         state = self.state
-        for occupied, oldest, youngest, average in zip(state[0::4], state[1::4], state[2::4], state[3::4]):
-            hovertext += f"is_occupied = {occupied}<br>msg.age_oldest = {oldest}<br>msg.age_youngest = {youngest}<br>msg.age_average = {average}<br>"
+        for occupied, oldest, youngest, average, num in zip(
+            state[0::5], state[1::5], state[2::5], state[3::5], state[4::5]
+        ):
+            hovertext += f"is_occupied = {occupied}<br>msg.age_oldest = {oldest}<br>msg.age_youngest = {youngest}<br>msg.age_average = {average}<br>msg.num_measurements = {num}<br>"
 
         return dict(
             color=color,
