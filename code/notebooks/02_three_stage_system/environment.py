@@ -1,10 +1,11 @@
+from typing import Callable, Dict, List, Tuple
+
 import gymnasium as gym
 import numpy as np
 from computation_sim.basic_types import Time
-from computation_sim.nodes import ConstantNormalizer, SinkNode, OutputNode
-from computation_sim.system import num_actions, unpack_action, System
+from computation_sim.nodes import ConstantNormalizer, OutputNode, SinkNode
+from computation_sim.system import System, num_actions, unpack_action
 from computation_sim.time import Clock
-from typing import List, Callable, Dict, Tuple
 
 
 class MultiStageEnv(gym.Env):
@@ -14,16 +15,15 @@ class MultiStageEnv(gym.Env):
         system: System,
         sinks: List[SinkNode],
         output: OutputNode,
-        compute_reward:Callable[["MultiStageEnv", np.ndarray], Tuple[float, Dict]],
+        compute_reward: Callable[["MultiStageEnv", np.ndarray], Tuple[float, Dict]],
         dt: Time = 10,
-        
     ):
         # Store init params
         self.clock: Clock = clock
         self.system: System = system
         self.sinks: List[SinkNode] = sinks
         self.output: OutputNode = output
-        
+
         self.dt = dt
         self.compute_reward = compute_reward
 
@@ -71,4 +71,4 @@ class MultiStageEnv(gym.Env):
         return self.state, reward, False, False, info
 
     def _count_lost_msgs(self) -> int:
-        return 
+        return
