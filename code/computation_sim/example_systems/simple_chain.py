@@ -60,9 +60,7 @@ class SimpleChainBuilder(SystemBuidler):
 
         # 4. SINK
         self._nodes["SINK"] = SinkNode(
-            self.clock.as_readonly(),
-            id="SINK_NODE",
-            count_normalizer=self.count_normalizer,
+            self.clock.as_readonly(), id="SINK_NODE", count_normalizer=self.count_normalizer
         )
 
         # Connect outputs
