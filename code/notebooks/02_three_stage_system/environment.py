@@ -27,6 +27,7 @@ class Reward:
         gamma: float = 1.0,
     ):
         self.time_provider = time_provider
+        self.t_init = self.time_provider.time
         self.system_collection = system_collection
         self._alpha = alpha
         self._beta = beta
@@ -34,9 +35,9 @@ class Reward:
         self._inactive_action_collections: List[FilterinMISOActionCollection] = list()
 
     def record_basline_state(self):
-        self._inactive_action_collections = List[
+        self._inactive_action_collections = list(
             filter(lambda x: not x.node.is_busy, self.system_collection.action_collections)
-        ]
+        )
 
     def _count_vanished_msgs(self) -> Dict[str, int]:
         return {sink.id: sink.count for sink in self.system_collection.sinks}
@@ -45,28 +46,34 @@ class Reward:
         counts = dict()
         activated_collections = filter(lambda x: x.node.is_busy, self._inactive_action_collections)
         for collection in activated_collections:
-            counts[collection.node.id] = collection.node.input_count - len(collection.input_buffers)
+            counts[collection.node.id] = len(collection.input_buffers) - collection.node.filtered_input_count
         return counts
 
     def _get_output_ages(self) -> Header:
         last_received = self.system_collection.output.last_received
         now = self.time_provider.time
-        return dict(
-            output_age_min=(as_age(last_received.header.t_measure_youngest, now) if last_received else 0),
-            output_age_max=(as_age(last_received.header.t_measure_oldest, now) if last_received else 0),
-            output_age_avg=(as_age(last_received.header.t_measure_average, now) if last_received else 0),
-        )
+        if last_received:
+            return dict(
+                output_age_min=(as_age(last_received.header.t_measure_youngest, now)),
+                output_age_max=(as_age(last_received.header.t_measure_oldest, now)),
+                output_age_avg=(as_age(last_received.header.t_measure_average, now)),
+            )
+        else:
+            return dict(
+                output_age_min=(as_age(self.t_init, now)),
+                output_age_max=(as_age(self.t_init, now)),
+                output_age_avg=(as_age(self.t_init, now)),
+            )
 
     def compute(self, action: List[int]) -> Tuple[float, dict]:
         info = dict(
-            lost_msgs=self._count_vanished_msgs(),
-            rejected_msgs=self._count_rejected_msgs(),
-            output_header=self._get_output_ages(),
-            active_action_count=np.sum(action),
+            lost_messages=sum(self._count_vanished_msgs().values()),
+            rejected_messages=sum(self._count_rejected_msgs().values()),
         )
-        reward = -self._alpha * float(sum(info["lost_msgs"].values()) + sum(info["rejected_msgs"].values()))
+        info.update(self._get_output_ages())
+        reward = -self._alpha * float(info["lost_messages"] + info["rejected_messages"])
         reward -= self._beta * float(info["output_age_max"])
-        reward -= self._gamma * float(info["active_action_count"])
+        reward -= self._gamma * float(np.sum(action))
         return reward, info
 
 
@@ -85,6 +92,7 @@ class MultiStageEnv(gym.Env):
         self.dt = dt
 
         # Set dimensionality of action / observation spaces
+        system_collection.system.update()
         self.action_space = gym.spaces.Discrete(num_actions(self.system.num_action))
         lb = -np.inf * np.ones((len(self.system.state),), dtype=float)
         ub = +np.inf * np.ones((len(self.system.state),), dtype=float)
