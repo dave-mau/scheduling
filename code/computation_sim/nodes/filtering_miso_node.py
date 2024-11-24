@@ -37,6 +37,18 @@ class FilteringMISONode(Node):
     def outputs(self) -> List[Node]:
         return [self._output_pass, self._output_fail]
 
+    @property
+    def input_count(self) -> int:
+        """ The number of filtered inputs that are currently being processed.
+        """
+        return self._input_count
+    
+    @property
+    def total_measurement_count(self) -> int:
+        """ The total number of measurements on which the node is currently working.
+        """
+        return self._total_measurement_count
+
     def receive(self, message: Message) -> None:
         self._input_messages.append(deepcopy(message))
         if self._receive_cb:
