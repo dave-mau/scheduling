@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, NamedTuple
 
 import numpy as np
 from computation_sim.basic_types import Time
@@ -16,6 +16,20 @@ from computation_sim.system import Action, System, SystemBuidler
 from computation_sim.time import Clock, DurationSampler
 
 
+class FilterinMISOActionCollection(NamedTuple):
+    input_buffers: List[RingBufferNode]
+    node: FilteringMISONode
+    action: Action
+
+
+class MultiStageSystemCollection(NamedTuple):
+    system: System
+    sources: List[SourceNode]
+    sinks: List[SinkNode]
+    action_collections: List[FilterinMISOActionCollection]
+    output: OutputNode
+
+
 class ThreeStageSystemBuilder(SystemBuidler):
     def __init__(
         self,
@@ -28,20 +42,36 @@ class ThreeStageSystemBuilder(SystemBuidler):
         self.age_normalizer = age_normalizer
         self.count_normalizer = count_normalizer
         self.occupancy_normalizer = occupancy_normalizer
-        self._system = None
+
+        self._system: System = None
+        self._sources: List[SourceNode] = []
+        self._sinks: List[SourceNode] = []
+        self._action_collections: List[FilterinMISOActionCollection] = []
+        self._output: OutputNode = None
         self._nodes = {}
-        self._actions = []
 
         self._init_sinks()
 
+    @property
+    def system_collection(self) -> MultiStageSystemCollection:
+        return MultiStageSystemCollection(
+            system=self._system,
+            sources=self._sources,
+            sinks=self._sinks,
+            action_collections=self._action_collections,
+            output=self._output,
+        )
+
     def _init_sinks(self):
-        # Initialize SinkNodes for verflow and fail outputs
-        self._nodes["SENSOR_BUFFER_LOST"] = SinkNode(self.clock.as_readonly(), id="SENSOR_BUFFER_LOST")
-        self._nodes["SENSOR_COMPUTE_LOST"] = SinkNode(self.clock.as_readonly(), id="SENSOR_COMPUTE_LOST")
-        self._nodes["SENSOR_COMPUTE_BUFFER_LOST"] = SinkNode(self.clock.as_readonly(), id="SENSOR_COMPUTE_BUFFER_LOST")
-        self._nodes["EDGE_COMPUTE_LOST"] = SinkNode(self.clock.as_readonly(), id="EDGE_COMPUTE_LOST")
-        self._nodes["EDGE_COMPUTE_BUFFER_LOST"] = SinkNode(self.clock.as_readonly(), id="EDGE_COMPUTE_BUFFER_LOST")
-        self._nodes["OUTPUT_COMPUTE_LOST"] = SinkNode(self.clock.as_readonly(), id="OUTPUT_COMPUTE_LOST")
+        self._sinks = dict(
+            SENSOR_BUFFER_LOST=SinkNode(self.clock.as_readonly(), id="SENSOR_BUFFER_LOST"),
+            SENSOR_COMPUTE_LOST=SinkNode(self.clock.as_readonly(), id="SENSOR_COMPUTE_LOST"),
+            SENSOR_COMPUTE_BUFFER_LOST=SinkNode(self.clock.as_readonly(), id="SENSOR_COMPUTE_BUFFER_LOST"),
+            EDGE_COMPUTE_LOST=SinkNode(self.clock.as_readonly(), id="EDGE_COMPUTE_LOST"),
+            EDGE_COMPUTE_BUFFER_LOST=SinkNode(self.clock.as_readonly(), id="EDGE_COMPUTE_BUFFER_LOST"),
+            OUTPUT_COMPUTE_LOST=SinkNode(self.clock.as_readonly(), id="OUTPUT_COMPUTE"),
+        )
+        self._nodes.update(self._sinks)
 
     def add_sensor_chain(
         self,
@@ -56,6 +86,7 @@ class ThreeStageSystemBuilder(SystemBuidler):
         sensor = PeriodicEpochSensor(sensor_epoch, sensor_period, sensor_disturbance)
         source_node = SourceNode(self.clock.as_readonly(), sensor, f"SENSOR_{id}")
         self._nodes[source_node.id] = source_node
+        self._sources.append(source_node)
 
         # Sensor Output Buffer
         sensor_buffer_node = RingBufferNode(
@@ -136,7 +167,7 @@ class ThreeStageSystemBuilder(SystemBuidler):
 
         # Action can only be executed if the compute node is not busy
         action.register_readiness_callback(lambda: not compute_node.is_busy)
-        self._actions.append(action)
+        self._action_collections.append(FilterinMISOActionCollection(inputs, compute_node, action))
 
         compute_node.set_output_pass(buffer_node)
         compute_node.set_output_fail(self._nodes["EDGE_COMPUTE_LOST"])
@@ -144,7 +175,10 @@ class ThreeStageSystemBuilder(SystemBuidler):
         return buffer_node
 
     def add_output_compute(
-        self, inputs: List[RingBufferNode], compute_duration: DurationSampler, filter_threshold: float = np.inf
+        self,
+        inputs: List[RingBufferNode],
+        compute_duration: DurationSampler,
+        filter_threshold: float = np.inf,
     ):
         # Output Compute Node
         compute_node = FilteringMISONode(
@@ -177,12 +211,13 @@ class ThreeStageSystemBuilder(SystemBuidler):
             action.register_callback(input.trigger, 1)
         action.register_callback(compute_node.trigger, 0)
         action.register_readiness_callback(lambda: not compute_node.is_busy)
-        self._actions.append(action)
+        self._action_collections.append(FilterinMISOActionCollection(inputs, compute_node, action))
+        self._output = output_node
 
     def build(self) -> None:
         # Build the system
         self._system = System()
-        for action in self._actions:
-            self._system.add_action(action)
+        for action_collection in self._action_collections:
+            self._system.add_action(action_collection.action)
         for node in self._nodes.values():
             self._system.add_node(node)
