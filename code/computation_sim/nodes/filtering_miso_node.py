@@ -39,14 +39,12 @@ class FilteringMISONode(Node):
 
     @property
     def filtered_input_count(self) -> int:
-        """ The number of filtered inputs that are currently being processed.
-        """
+        """The number of filtered inputs that are currently being processed."""
         return self._input_count
-    
+
     @property
     def total_measurement_count(self) -> int:
-        """ The total number of measurements on which the node is currently working.
-        """
+        """The total number of measurements on which the node is currently working."""
         return self._total_measurement_count
 
     def receive(self, message: Message) -> None:
