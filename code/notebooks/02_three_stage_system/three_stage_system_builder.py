@@ -75,7 +75,8 @@ class ThreeStageSystemBuilder(SystemBuidler):
         self._sinks = [
             sinks["SENSOR_BUFFER_LOST"],
             sinks["SENSOR_COMPUTE_BUFFER_LOST"],
-            sinks["EDGE_COMPUTE_BUFFER_LOST"]]
+            sinks["EDGE_COMPUTE_BUFFER_LOST"],
+        ]
 
     def add_sensor_chain(
         self,
