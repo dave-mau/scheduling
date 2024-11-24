@@ -38,7 +38,7 @@ class FilteringMISONode(Node):
         return [self._output_pass, self._output_fail]
 
     @property
-    def input_count(self) -> int:
+    def filtered_input_count(self) -> int:
         """ The number of filtered inputs that are currently being processed.
         """
         return self._input_count
