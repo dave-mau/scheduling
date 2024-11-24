@@ -63,7 +63,7 @@ class ThreeStageSystemBuilder(SystemBuidler):
         )
 
     def _init_sinks(self):
-        self._sinks = dict(
+        sinks = dict(
             SENSOR_BUFFER_LOST=SinkNode(self.clock.as_readonly(), id="SENSOR_BUFFER_LOST"),
             SENSOR_COMPUTE_LOST=SinkNode(self.clock.as_readonly(), id="SENSOR_COMPUTE_LOST"),
             SENSOR_COMPUTE_BUFFER_LOST=SinkNode(self.clock.as_readonly(), id="SENSOR_COMPUTE_BUFFER_LOST"),
@@ -71,7 +71,11 @@ class ThreeStageSystemBuilder(SystemBuidler):
             EDGE_COMPUTE_BUFFER_LOST=SinkNode(self.clock.as_readonly(), id="EDGE_COMPUTE_BUFFER_LOST"),
             OUTPUT_COMPUTE_LOST=SinkNode(self.clock.as_readonly(), id="OUTPUT_COMPUTE"),
         )
-        self._nodes.update(self._sinks)
+        self._nodes.update(sinks)
+        self._sinks = [
+            sinks["SENSOR_BUFFER_LOST"],
+            sinks["SENSOR_COMPUTE_BUFFER_LOST"],
+            sinks["EDGE_COMPUTE_BUFFER_LOST"]]
 
     def add_sensor_chain(
         self,
