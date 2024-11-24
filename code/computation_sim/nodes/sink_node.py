@@ -20,6 +20,10 @@ class SinkNode(Node):
         self._state_normalizer = count_normalizer if count_normalizer else ConstantNormalizer(1.0)
 
     @property
+    def count(self) -> int:
+        return len(self.received_messages)
+
+    @property
     def received_messages(self) -> List[Message]:
         return self._received_messages
 
