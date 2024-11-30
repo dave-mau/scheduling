@@ -29,6 +29,7 @@ class MultiStageSystemCollection(NamedTuple):
     action_collections: List[ActionCollection]
     output: OutputNode
 
+
 class ThreeStageSystemBuilder(SystemBuidler):
     def __init__(
         self,
@@ -58,7 +59,7 @@ class ThreeStageSystemBuilder(SystemBuidler):
             sources=self._sources,
             sinks=self._sinks,
             action_collections=self._action_collections,
-            output=self._output
+            output=self._output,
         )
 
     def _init_sinks(self):

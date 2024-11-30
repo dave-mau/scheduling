@@ -1,23 +1,20 @@
-import networkx as nx
+from collections import defaultdict
 from typing import Callable, Dict, Iterable, List, NamedTuple, Tuple
 
 import gymnasium as gym
+import networkx as nx
 import numpy as np
-from collections import defaultdict
 from computation_sim.basic_types import Header, Time
 from computation_sim.nodes import (
-    Node,
     ConstantNormalizer,
     FilteringMISONode,
+    Node,
     OutputNode,
     SinkNode,
 )
 from computation_sim.system import System, num_actions, unpack_action
 from computation_sim.time import Clock, TimeProvider, as_age
-from three_stage_system_builder import (
-    ActionCollection,
-    MultiStageSystemCollection,
-)
+from three_stage_system_builder import ActionCollection, MultiStageSystemCollection
 
 
 class Reward:
@@ -25,22 +22,21 @@ class Reward:
         self,
         time_provider: TimeProvider,
         system_collection: MultiStageSystemCollection,
-        alpha: float = 1.0,
-        beta: float = 1.0,
-        gamma: float = 1.0,
+        cost_message_loss: float = 1.0,
+        cost_output_age: float = 1.0,
+        cost_activation: float = 1.0,
     ):
         self.time_provider = time_provider
         self.t_init = self.time_provider.time
         self.system_collection = system_collection
-        self._alpha = alpha
-        self._beta = beta
-        self._gamma = gamma
+        self._alpha = cost_message_loss
+        self._beta = cost_output_age
+        self._gamma = cost_activation
         self._inactive_action_collections: List[ActionCollection] = list()
         self._upstream_sensor_count = self.count_upstream_sources()
 
     def count_upstream_sources(self):
-        """ Count the number of upstream sources for each node in the system.
-        """
+        """Count the number of upstream sources for each node in the system."""
         node_graph = self.system_collection.system.node_graph
         upstream_sensor_count = defaultdict(int)
         for source in self.system_collection.sources:
@@ -49,28 +45,44 @@ class Reward:
         return upstream_sensor_count
 
     def record_basline_state(self):
-        """ Get the set of all actio nnodes that are currently not busy.
-        """
+        """Get the set of all actio nnodes that are currently not busy."""
         self._inactive_action_collections = list(
             filter(lambda x: not x.node.is_busy, self.system_collection.action_collections)
         )
 
-    def _count_sinked_msgs(self) -> Dict[str, int]:
+    def _count_buffer_overrides(self) -> Dict[str, int]:
+        """Counts the number of messages that were lost due to buffer overrides."""
         return {sink.id: sink.count for sink in self.system_collection.sinks}
 
-    def _count_rejected_msgs(self) -> Tuple[Dict[str, int], Dict[str, int]]:
+    def _count_missing_measurements(self) -> Dict[str, int]:
+        """Counts the number of missing measurements for each action node that was
+        activated since the last time record_basline_state was called.
+        """
         # Find all action nodes that were activated since the last time
         # record_basline_state was called.
         activated_collections = filter(lambda x: x.node.is_busy, self._inactive_action_collections)
-
-        msg_counts = dict()
-        measurement_counts = dict()
+        counts = dict()
         for collection in activated_collections:
-            msg_counts[collection.node.id] = len(collection.input_buffers) - collection.node.filtered_input_count
-            measurement_counts[collection.node.id] = self._upstream_sensor_count[collection.node] - collection.node.total_measurement_count
-        return msg_counts, measurement_counts
+            # msg_counts[collection.node.id] = len(collection.input_buffers) - collection.node.filtered_input_count
+            counts[collection.node.id] = (
+                self._upstream_sensor_count[collection.node] - collection.node.total_measurement_count
+            )
+        return counts
+
+    def _count_missing_inputs(self) -> Dict[str, int]:
+        """Counts the number of missing inputs for each action node that was
+        activated since the last time record_basline_state was called.
+        """
+        # Find all action nodes that were activated since the last time
+        # record_basline_state was called.
+        activated_collections = filter(lambda x: x.node.is_busy, self._inactive_action_collections)
+        counts = dict()
+        for collection in activated_collections:
+            counts[collection.node.id] = len(collection.input_buffers) - collection.node.filtered_input_count
+        return counts
 
     def _get_output_ages(self) -> Header:
+        """Gets the age of the output message."""
         last_received = self.system_collection.output.last_received
         now = self.time_provider.time
         if last_received:
@@ -87,11 +99,11 @@ class Reward:
             )
 
     def compute(self, action: List[int]) -> Tuple[float, dict]:
-        msg_counts, measurement_counts= self._count_rejected_msgs()
+        """Compute the reward based on the current state of the system."""
         info = dict(
-            lost_messages=sum(self._count_sinked_msgs().values()),
-            missing_message_count=sum(msg_counts.values()),
-            missing_measurement_count=sum(measurement_counts.values()),
+            lost_messages=sum(self._count_buffer_overrides().values()),
+            missing_input_count=sum(self._count_missing_inputs().values()),
+            missing_measurement_count=sum(self._count_missing_measurements().values()),
             num_activations=np.sum(action),
         )
         info.update(self._get_output_ages())
