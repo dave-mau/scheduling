@@ -69,11 +69,12 @@ class Reward:
         info = dict(
             lost_messages=sum(self._count_vanished_msgs().values()),
             rejected_messages=sum(self._count_rejected_msgs().values()),
+            num_activations=np.sum(action),
         )
         info.update(self._get_output_ages())
         reward = -self._alpha * float(info["lost_messages"] + info["rejected_messages"])
         reward -= self._beta * float(info["output_age_max"])
-        reward -= self._gamma * float(np.sum(action))
+        reward -= self._gamma * float(info["num_activations"])
         return reward, info
 
 
