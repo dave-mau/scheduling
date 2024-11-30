@@ -20,6 +20,10 @@ class SinkNode(Node):
         self._state_normalizer = count_normalizer if count_normalizer else ConstantNormalizer(1.0)
 
     @property
+    def count(self) -> int:
+        return len(self.received_messages)
+
+    @property
     def received_messages(self) -> List[Message]:
         return self._received_messages
 
@@ -37,7 +41,11 @@ class SinkNode(Node):
     @property
     def draw_options(self) -> dict:
         color = "darkgrey" if len(self._received_messages) == 0 else "dimgrey"
-        return dict(color=color, symbol="triangle-down", hovertext=f"num_messages = {len(self._received_messages)}")
+        return dict(
+            color=color,
+            symbol="triangle-down",
+            hovertext=f"num_messages = {len(self._received_messages)}",
+        )
 
     def update(self):
         pass
