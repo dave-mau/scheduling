@@ -64,18 +64,18 @@ class ThreeStageSystemBuilder(SystemBuidler):
 
     def _init_sinks(self):
         sinks = dict(
-            SENSOR_BUFFER_LOST=SinkNode(self.clock.as_readonly(), id="SENSOR_BUFFER_LOST"),
-            SENSOR_COMPUTE_LOST=SinkNode(self.clock.as_readonly(), id="SENSOR_COMPUTE_LOST"),
-            SENSOR_COMPUTE_BUFFER_LOST=SinkNode(self.clock.as_readonly(), id="SENSOR_COMPUTE_BUFFER_LOST"),
-            EDGE_COMPUTE_LOST=SinkNode(self.clock.as_readonly(), id="EDGE_COMPUTE_LOST"),
-            EDGE_COMPUTE_BUFFER_LOST=SinkNode(self.clock.as_readonly(), id="EDGE_COMPUTE_BUFFER_LOST"),
-            OUTPUT_COMPUTE_LOST=SinkNode(self.clock.as_readonly(), id="OUTPUT_COMPUTE"),
+            SENS_BUF_LOST=SinkNode(self.clock.as_readonly(), id="SENS_BUF_LOST"),
+            SENS_CMP_LOST=SinkNode(self.clock.as_readonly(), id="SENS_CMP_LOST"),
+            SENS_CMP_BUF_LOST=SinkNode(self.clock.as_readonly(), id="SENS_CMP_BUF_LOST"),
+            EDGE_CMP_LOST=SinkNode(self.clock.as_readonly(), id="EDGE_CMP_LOST"),
+            EDGE_CMP_BUF_LOST=SinkNode(self.clock.as_readonly(), id="EDGE_CMP_BUF_LOST"),
+            OUTPUT_CMP_LOST=SinkNode(self.clock.as_readonly(), id="OUTPUT_CMP_LOST"),
         )
         self._nodes.update(sinks)
         self._sinks = [
-            sinks["SENSOR_BUFFER_LOST"],
-            sinks["SENSOR_COMPUTE_BUFFER_LOST"],
-            sinks["EDGE_COMPUTE_BUFFER_LOST"],
+            sinks["SENS_BUF_LOST"],
+            sinks["SENS_CMP_BUF_LOST"],
+            sinks["EDGE_CMP_BUF_LOST"],
         ]
 
     def add_sensor_chain(
@@ -89,14 +89,14 @@ class ThreeStageSystemBuilder(SystemBuidler):
 
         # Sensor
         sensor = PeriodicEpochSensor(sensor_epoch, sensor_period, sensor_disturbance)
-        source_node = SourceNode(self.clock.as_readonly(), sensor, f"SENSOR_{id}")
+        source_node = SourceNode(self.clock.as_readonly(), sensor, f"SENS_{id}")
         self._nodes[source_node.id] = source_node
         self._sources.append(source_node)
 
         # Sensor Output Buffer
         sensor_buffer_node = RingBufferNode(
             self.clock.as_readonly(),
-            id=f"SENSOR_BUFFER_{id}",
+            id=f"SENS_BUF_{id}",
             max_num_elements=1,
             age_normalizer=self.age_normalizer,
             occupancy_normalizer=self.occupancy_normalizer,
@@ -108,7 +108,7 @@ class ThreeStageSystemBuilder(SystemBuidler):
         compute_node = FilteringMISONode(
             self.clock.as_readonly(),
             duration_sampler=compute_duration,
-            id=f"SENSOR_COMPUTE_{id}",
+            id=f"SENS_CMP_{id}",
             age_normalizer=self.age_normalizer,
             occupancy_normalizer=self.occupancy_normalizer,
             receive_cb=lambda node: node.trigger(),
@@ -118,7 +118,7 @@ class ThreeStageSystemBuilder(SystemBuidler):
         # Compute output buffer
         compute_buffer_node = RingBufferNode(
             self.clock.as_readonly(),
-            id=f"SENSOR_COMPUTE_BUFFER_{id}",
+            id=f"SENS_CMP_BUF_{id}",
             max_num_elements=1,
             age_normalizer=self.age_normalizer,
             occupancy_normalizer=self.occupancy_normalizer,
@@ -128,10 +128,10 @@ class ThreeStageSystemBuilder(SystemBuidler):
         # Connect the nodes
         source_node.add_output(sensor_buffer_node)
         sensor_buffer_node.set_output(compute_node)
-        sensor_buffer_node.set_overflow_output(self._nodes["SENSOR_BUFFER_LOST"])
+        sensor_buffer_node.set_overflow_output(self._nodes["SENS_BUF_LOST"])
         compute_node.set_output_pass(compute_buffer_node)
-        compute_node.set_output_fail(self._nodes["SENSOR_COMPUTE_LOST"])
-        compute_buffer_node.set_overflow_output(self._nodes["SENSOR_COMPUTE_BUFFER_LOST"])
+        compute_node.set_output_fail(self._nodes["SENS_CMP_LOST"])
+        compute_buffer_node.set_overflow_output(self._nodes["SENS_CMP_BUF_LOST"])
         return compute_buffer_node
 
     def add_edge_compute(
@@ -146,7 +146,7 @@ class ThreeStageSystemBuilder(SystemBuidler):
         compute_node = FilteringMISONode(
             self.clock.as_readonly(),
             duration_sampler=compute_duration,
-            id=f"EDGE_COMPUTE_{id}",
+            id=f"EDGE_CMP_{id}",
             filter_threshold=filter_threshold,
             age_normalizer=self.age_normalizer,
             occupancy_normalizer=self.occupancy_normalizer,
@@ -156,7 +156,7 @@ class ThreeStageSystemBuilder(SystemBuidler):
         # Add a buffer for the output
         buffer_node = RingBufferNode(
             self.clock.as_readonly(),
-            id=f"EDGE_COMPUTE_BUFFER_{id}",
+            id=f"EDGE_CMP_BUF_{id}",
             max_num_elements=1,
             age_normalizer=self.age_normalizer,
             occupancy_normalizer=self.occupancy_normalizer,
@@ -164,7 +164,7 @@ class ThreeStageSystemBuilder(SystemBuidler):
         self._nodes[buffer_node.id] = buffer_node
 
         # Add an action and connect the nodes
-        action = Action(f"EDGE_COPMPUTE_{id}_ACT")
+        action = Action(f"EDGE_CMP_{id}_ACT")
         for input in inputs:
             input.set_output(compute_node)
             action.register_callback(input.trigger, 1)
@@ -175,8 +175,8 @@ class ThreeStageSystemBuilder(SystemBuidler):
         self._action_collections.append(ActionCollection(inputs, compute_node, action))
 
         compute_node.set_output_pass(buffer_node)
-        compute_node.set_output_fail(self._nodes["EDGE_COMPUTE_LOST"])
-        buffer_node.set_overflow_output(self._nodes["EDGE_COMPUTE_BUFFER_LOST"])
+        compute_node.set_output_fail(self._nodes["EDGE_CMP_LOST"])
+        buffer_node.set_overflow_output(self._nodes["EDGE_CMP_BUF_LOST"])
         return buffer_node
 
     def add_output_compute(
@@ -189,7 +189,7 @@ class ThreeStageSystemBuilder(SystemBuidler):
         compute_node = FilteringMISONode(
             self.clock.as_readonly(),
             duration_sampler=compute_duration,
-            id="OUTPUT_COMPUTE",
+            id="OUTPUT_CMP",
             filter_threshold=filter_threshold,
             age_normalizer=self.age_normalizer,
             occupancy_normalizer=self.occupancy_normalizer,
@@ -207,10 +207,10 @@ class ThreeStageSystemBuilder(SystemBuidler):
 
         # Connect the nodes
         compute_node.set_output_pass(output_node)
-        compute_node.set_output_fail(self._nodes["OUTPUT_COMPUTE_LOST"])
+        compute_node.set_output_fail(self._nodes["OUTPUT_CMP_LOST"])
 
         # Setup the action
-        action = Action("OUTPUT_COMPUTE_ACT")
+        action = Action("OUTPUT_CMP_ACT")
         for input in inputs:
             input.set_output(compute_node)
             action.register_callback(input.trigger, 1)

@@ -104,13 +104,21 @@ class SystemDrawer(object):
         common_keys = set.intersection(*map(set, opts))
         return {k: [dic[k] for dic in opts] for k in common_keys}
 
+class ImageCreator:
+    @staticmethod
+    def to_image(drawer: SystemDrawer):
+        return Image.open(BytesIO(drawer.fw.to_image(format='jpg')))
+
+    @staticmethod
+    def save(drawer: SystemDrawer, path: pathlib.Path):
+        imageio.imsave(str(path), ImageCreator.to_image(drawer))
 
 class GifCreator:
     def __init__(self):
         self.frames = []
 
     def update(self, drawer: SystemDrawer):
-        self.frames.append(self._to_image(drawer))
+        self.frames.append(ImageCreator.to_image(drawer))
 
     def _to_image(self, drawer: SystemDrawer) -> Image.Image:
         return Image.open(BytesIO(drawer.fw.to_image(format="jpg")))
