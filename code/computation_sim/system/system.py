@@ -23,6 +23,10 @@ class System:
         return len(self._actions)
 
     @property
+    def actions(self) -> List[Action]:
+        return self._actions
+
+    @property
     def state(self) -> List[float]:
         state = []
         for node in self._update_list:
