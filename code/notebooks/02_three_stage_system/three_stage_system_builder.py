@@ -16,7 +16,7 @@ from computation_sim.system import Action, System, SystemBuidler
 from computation_sim.time import Clock, DurationSampler
 
 
-class FilterinMISOActionCollection(NamedTuple):
+class ActionCollection(NamedTuple):
     input_buffers: List[RingBufferNode]
     node: FilteringMISONode
     action: Action
@@ -26,9 +26,8 @@ class MultiStageSystemCollection(NamedTuple):
     system: System
     sources: List[SourceNode]
     sinks: List[SinkNode]
-    action_collections: List[FilterinMISOActionCollection]
+    action_collections: List[ActionCollection]
     output: OutputNode
-
 
 class ThreeStageSystemBuilder(SystemBuidler):
     def __init__(
@@ -46,7 +45,7 @@ class ThreeStageSystemBuilder(SystemBuidler):
         self._system: System = None
         self._sources: List[SourceNode] = []
         self._sinks: List[SourceNode] = []
-        self._action_collections: List[FilterinMISOActionCollection] = []
+        self._action_collections: List[ActionCollection] = []
         self._output: OutputNode = None
         self._nodes = {}
 
@@ -59,7 +58,7 @@ class ThreeStageSystemBuilder(SystemBuidler):
             sources=self._sources,
             sinks=self._sinks,
             action_collections=self._action_collections,
-            output=self._output,
+            output=self._output
         )
 
     def _init_sinks(self):
@@ -172,7 +171,7 @@ class ThreeStageSystemBuilder(SystemBuidler):
 
         # Action can only be executed if the compute node is not busy
         action.register_readiness_callback(lambda: not compute_node.is_busy)
-        self._action_collections.append(FilterinMISOActionCollection(inputs, compute_node, action))
+        self._action_collections.append(ActionCollection(inputs, compute_node, action))
 
         compute_node.set_output_pass(buffer_node)
         compute_node.set_output_fail(self._nodes["EDGE_COMPUTE_LOST"])
@@ -216,7 +215,7 @@ class ThreeStageSystemBuilder(SystemBuidler):
             action.register_callback(input.trigger, 1)
         action.register_callback(compute_node.trigger, 0)
         action.register_readiness_callback(lambda: not compute_node.is_busy)
-        self._action_collections.append(FilterinMISOActionCollection(inputs, compute_node, action))
+        self._action_collections.append(ActionCollection(inputs, compute_node, action))
         self._output = output_node
 
     def build(self) -> None:
@@ -226,3 +225,6 @@ class ThreeStageSystemBuilder(SystemBuidler):
             self._system.add_action(action_collection.action)
         for node in self._nodes.values():
             self._system.add_node(node)
+
+        # Update the system once, to force-set the update list and node graph
+        self._system.update()

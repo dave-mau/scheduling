@@ -1,9 +1,12 @@
+import networkx as nx
 from typing import Callable, Dict, Iterable, List, NamedTuple, Tuple
 
 import gymnasium as gym
 import numpy as np
+from collections import defaultdict
 from computation_sim.basic_types import Header, Time
 from computation_sim.nodes import (
+    Node,
     ConstantNormalizer,
     FilteringMISONode,
     OutputNode,
@@ -12,7 +15,7 @@ from computation_sim.nodes import (
 from computation_sim.system import System, num_actions, unpack_action
 from computation_sim.time import Clock, TimeProvider, as_age
 from three_stage_system_builder import (
-    FilterinMISOActionCollection,
+    ActionCollection,
     MultiStageSystemCollection,
 )
 
@@ -32,22 +35,40 @@ class Reward:
         self._alpha = alpha
         self._beta = beta
         self._gamma = gamma
-        self._inactive_action_collections: List[FilterinMISOActionCollection] = list()
+        self._inactive_action_collections: List[ActionCollection] = list()
+        self._upstream_sensor_count = self.count_upstream_sources()
+
+    def count_upstream_sources(self):
+        """ Count the number of upstream sources for each node in the system.
+        """
+        node_graph = self.system_collection.system.node_graph
+        upstream_sensor_count = defaultdict(int)
+        for source in self.system_collection.sources:
+            for node in nx.descendants(node_graph, source):
+                upstream_sensor_count[node] += 1
+        return upstream_sensor_count
 
     def record_basline_state(self):
+        """ Get the set of all actio nnodes that are currently not busy.
+        """
         self._inactive_action_collections = list(
             filter(lambda x: not x.node.is_busy, self.system_collection.action_collections)
         )
 
-    def _count_vanished_msgs(self) -> Dict[str, int]:
+    def _count_sinked_msgs(self) -> Dict[str, int]:
         return {sink.id: sink.count for sink in self.system_collection.sinks}
 
-    def _count_rejected_msgs(self) -> Dict[str, int]:
-        counts = dict()
+    def _count_rejected_msgs(self) -> Tuple[Dict[str, int], Dict[str, int]]:
+        # Find all action nodes that were activated since the last time
+        # record_basline_state was called.
         activated_collections = filter(lambda x: x.node.is_busy, self._inactive_action_collections)
+
+        msg_counts = dict()
+        measurement_counts = dict()
         for collection in activated_collections:
-            counts[collection.node.id] = len(collection.input_buffers) - collection.node.filtered_input_count
-        return counts
+            msg_counts[collection.node.id] = len(collection.input_buffers) - collection.node.filtered_input_count
+            measurement_counts[collection.node.id] = self._upstream_sensor_count[collection.node] - collection.node.total_measurement_count
+        return msg_counts, measurement_counts
 
     def _get_output_ages(self) -> Header:
         last_received = self.system_collection.output.last_received
@@ -66,13 +87,15 @@ class Reward:
             )
 
     def compute(self, action: List[int]) -> Tuple[float, dict]:
+        msg_counts, measurement_counts= self._count_rejected_msgs()
         info = dict(
-            lost_messages=sum(self._count_vanished_msgs().values()),
-            rejected_messages=sum(self._count_rejected_msgs().values()),
+            lost_messages=sum(self._count_sinked_msgs().values()),
+            missing_message_count=sum(msg_counts.values()),
+            missing_measurement_count=sum(measurement_counts.values()),
             num_activations=np.sum(action),
         )
         info.update(self._get_output_ages())
-        reward = -self._alpha * float(info["lost_messages"] + info["rejected_messages"])
+        reward = -self._alpha * float(info["lost_messages"] + info["missing_measurement_count"])
         reward -= self._beta * float(info["output_age_max"])
         reward -= self._gamma * float(info["num_activations"])
         return reward, info
