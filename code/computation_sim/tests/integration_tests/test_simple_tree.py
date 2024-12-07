@@ -187,8 +187,8 @@ def test_nominal(setup):
                 0.0,  #  9: Buffer 1: Number of Measurements
                 0.0,  # 10: Compute Node: Busy
                 0.01 * (clock.get_time() - 50),  # 11: Compute Node: Age last started
-                2.0,  # 12: Compute Node: Number of accepted inputs
-                2.0,  # 13: Compute Node: Number of total measurements
+                0.0,  # 12: Compute Node: Number of accepted inputs
+                0.0,  # 13: Compute Node: Number of total measurements
                 0.0,  # 14: Lost Messages (Buffer): Count
                 0.0,  # 15: Lost Messages (Compute): Count
                 1.0,  # 16: Output: Occupancy

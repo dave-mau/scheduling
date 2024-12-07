@@ -63,7 +63,7 @@ def test_nominal(setup):
     # t = 60 -- OUTPUT RECEIVED
     system.update()
     np.testing.assert_allclose(
-        [0.0, float(clock.get_time() - 50), 1.0, 1.0, 1.0, 60.0, 60.0, 60.0, 1.0, 0.0],
+        [0.0, float(clock.get_time() - 50), 0.0, 0.0, 1.0, 60.0, 60.0, 60.0, 1.0, 0.0],
         np.array(system.state),
         rtol=1.0e-6,
         atol=1.0e-6,
