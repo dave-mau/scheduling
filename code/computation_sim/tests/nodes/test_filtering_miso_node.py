@@ -140,8 +140,8 @@ def test_single_input_single_trigger(setup_empty_with_outputs):
     assert len(node.state) == 4
     assert node.state[0] == pytest.approx(0.0, 1.0e-6)
     assert node.state[1] == pytest.approx(float(5), 1.0e-6)
-    assert node.state[2] == pytest.approx(1.0, 1.0e-6)
-    assert node.state[3] == pytest.approx(5.0, 1.0e-6)
+    assert node.state[2] == pytest.approx(0.0, 1.0e-6)
+    assert node.state[3] == pytest.approx(0.0, 1.0e-6)
     assert not node.is_busy
     recv_pass_mock.receive.assert_called()
     recv_fail_mock.receive.assert_not_called()

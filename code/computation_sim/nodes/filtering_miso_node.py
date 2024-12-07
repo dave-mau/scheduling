@@ -79,7 +79,11 @@ class FilteringMISONode(Node):
         if self._output_pass and (self._result is not None):
             # Has output + result -> send to pass output
             self._output_pass.receive(self._result)
+
+        # Reset state
         self._is_busy = False
+        self._input_count = 0
+        self._total_measurement_count = 0
 
     def trigger(self):
         if self.is_busy:
