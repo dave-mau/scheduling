@@ -36,6 +36,7 @@ class HierarchicalSystemBuilder(SystemBuidler):
         self._action_collections: List[ActionCollection] = []
         self._output: OutputNode = None
         self._nodes = {}
+        self._samplers = []
 
         self._init_sinks()
 
@@ -47,6 +48,7 @@ class HierarchicalSystemBuilder(SystemBuidler):
             sinks=self._sinks,
             action_collections=self._action_collections,
             output=self._output,
+            samplers=self._samplers,
         )
 
     def _init_sinks(self):
@@ -73,6 +75,9 @@ class HierarchicalSystemBuilder(SystemBuidler):
         sensor_disturbance: DurationSampler,
         compute_duration: DurationSampler,
     ) -> RingBufferNode:
+        # Update samplers
+        self._samplers.append(sensor_disturbance)
+        self._samplers.append(compute_duration)
 
         # Sensor
         sensor = PeriodicEpochSensor(sensor_epoch, sensor_period, sensor_disturbance)
@@ -128,6 +133,8 @@ class HierarchicalSystemBuilder(SystemBuidler):
         compute_duration: DurationSampler,
         filter_threshold: float = np.inf,
     ) -> RingBufferNode:
+        # Update sampler
+        self._samplers.append(compute_duration)
 
         # Edge Compute Node
         compute_node = FilteringMISONode(
@@ -172,6 +179,9 @@ class HierarchicalSystemBuilder(SystemBuidler):
         compute_duration: DurationSampler,
         filter_threshold: float = np.inf,
     ):
+        # Update sampler
+        self._samplers.append(compute_duration)
+
         # Output Compute Node
         compute_node = FilteringMISONode(
             self.clock.as_readonly(),

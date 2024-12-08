@@ -71,6 +71,9 @@ def test_simple_tree_collection(build_simple_tree):
     # Output
     assert len(list(collection.system.node_graph.successors(collection.output))) == 0
 
+    # Samplers
+    assert len(collection.samplers) == 11
+
 @pytest.fixture
 def build_four_stages():
     clock = Clock(0)
@@ -140,3 +143,6 @@ def test_four_stages_collection(build_four_stages):
 
     # Output
     assert len(list(collection.system.node_graph.successors(collection.output))) == 0
+
+    # Samplers
+    assert len(collection.samplers) == 12
