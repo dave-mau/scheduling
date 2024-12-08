@@ -17,6 +17,11 @@ class Clock:
         self._initial_time = initial_time
         self._time = Time(initial_time)
 
+    @property
+    def initial_time(self) -> Time:
+        """Returns the initial epoch time in milliseconds."""
+        return self._initial_time
+
     def get_time(self) -> Time:
         """Returns the current epoch time in milliseconds."""
         return self._time
