@@ -72,7 +72,7 @@ class InformationLossObserver:
 
 
 class HierarchicalSystem(gym.Env):
-    metadata = {"render.modes": ["human", "image", "jupyter"], "render_fps": 10}
+    metadata = {"render_modes": ["human", "image", "jupyter"], "render_fps": 10}
 
     def __init__(
         self,
@@ -154,8 +154,8 @@ class HierarchicalSystem(gym.Env):
                 output_age_avg=(as_age(self.clock.initial_time, now)),
             )
 
-    def reset(self, seed=None):
-        super().reset(seed=seed)
+    def reset(self, seed=None, options = None):
+        super().reset(seed=seed, options=options)
         for sampler in self._system_collection.samplers:
             sampler.reset(seed=seed)
         self.clock.reset()
@@ -206,7 +206,7 @@ class HierarchicalSystem(gym.Env):
 
     def render(self):
         if self.render_mode == "image":
-            return ImageCreator().create(self.drawer.fw)
+            return np.asarray(ImageCreator().to_image(self.drawer))
         elif self.render_mode == "human":
             if self.dash_thread is None:
                 self.dash_thread = Thread(target=lambda: self.window.run_server(debug=False))

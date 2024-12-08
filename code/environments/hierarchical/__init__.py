@@ -6,6 +6,6 @@ from .reward import Reward
 from .types import ActionCollection, SystemCollection
 
 gym.register(
-    "hierarchical-system-v0",
+    "HierarchicalSystem-v0",
     entry_point=HierarchicalSystem,
 )
