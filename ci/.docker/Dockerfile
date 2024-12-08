@@ -20,7 +20,9 @@ RUN python3 -m pip install \
     scipy \
     sympy \
     tqdm \
-    plotly
+    plotly \
+    dash==2.14.2 \
+    ray[rllib]
 
 # Add ci-user
 RUN useradd -ms /bin/bash ci
