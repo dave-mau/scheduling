@@ -1,12 +1,12 @@
 import sys
+
 sys.path.insert(0, "/home/davidmauderli/repos/scheduling/code/")
 
 from computation_sim.nodes import ConstantNormalizer
 from computation_sim.time import Clock, GammaDistributionSampler, GaussianTimeSampler
-from environments.hierarchical import (
-    HierarchicalSystemBuilder,
-    Reward,
-)
+from environments.hierarchical import HierarchicalSystemBuilder, Reward
+
+
 class SystemConfig:
     def __init__(self, dt=10):
         self.input_sampler = GaussianTimeSampler(0.0, 1.0, 1.0, 100.0)
