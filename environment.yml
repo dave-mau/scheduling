@@ -34,4 +34,5 @@ dependencies:
   - moviepy>=1.0.3
   - ffmpeg>=4.4.2
   - x264
+  - ray-rllib>=2.37.0
 #  - conda-forge::stable-baselines3 prospect, but currently not needed!
