@@ -1,10 +1,9 @@
-from typing import List, NamedTuple
+from typing import List
 
 import numpy as np
 from computation_sim.basic_types import Time
 from computation_sim.nodes import (
     FilteringMISONode,
-    Node,
     OutputNode,
     PeriodicEpochSensor,
     RingBufferNode,
@@ -15,22 +14,10 @@ from computation_sim.nodes import (
 from computation_sim.system import Action, System, SystemBuidler
 from computation_sim.time import Clock, DurationSampler
 
-
-class ActionCollection(NamedTuple):
-    input_buffers: List[RingBufferNode]
-    node: FilteringMISONode
-    action: Action
+from .types import ActionCollection, SystemCollection
 
 
-class MultiStageSystemCollection(NamedTuple):
-    system: System
-    sources: List[SourceNode]
-    sinks: List[SinkNode]
-    action_collections: List[ActionCollection]
-    output: OutputNode
-
-
-class ThreeStageSystemBuilder(SystemBuidler):
+class HierarchicalSystemBuilder(SystemBuidler):
     def __init__(
         self,
         clock: Clock,
@@ -49,17 +36,19 @@ class ThreeStageSystemBuilder(SystemBuidler):
         self._action_collections: List[ActionCollection] = []
         self._output: OutputNode = None
         self._nodes = {}
+        self._samplers = []
 
         self._init_sinks()
 
     @property
-    def system_collection(self) -> MultiStageSystemCollection:
-        return MultiStageSystemCollection(
+    def system_collection(self) -> SystemCollection:
+        return SystemCollection(
             system=self._system,
             sources=self._sources,
             sinks=self._sinks,
             action_collections=self._action_collections,
             output=self._output,
+            samplers=self._samplers,
         )
 
     def _init_sinks(self):
@@ -86,6 +75,9 @@ class ThreeStageSystemBuilder(SystemBuidler):
         sensor_disturbance: DurationSampler,
         compute_duration: DurationSampler,
     ) -> RingBufferNode:
+        # Update samplers
+        self._samplers.append(sensor_disturbance)
+        self._samplers.append(compute_duration)
 
         # Sensor
         sensor = PeriodicEpochSensor(sensor_epoch, sensor_period, sensor_disturbance)
@@ -141,6 +133,8 @@ class ThreeStageSystemBuilder(SystemBuidler):
         compute_duration: DurationSampler,
         filter_threshold: float = np.inf,
     ) -> RingBufferNode:
+        # Update sampler
+        self._samplers.append(compute_duration)
 
         # Edge Compute Node
         compute_node = FilteringMISONode(
@@ -185,6 +179,9 @@ class ThreeStageSystemBuilder(SystemBuidler):
         compute_duration: DurationSampler,
         filter_threshold: float = np.inf,
     ):
+        # Update sampler
+        self._samplers.append(compute_duration)
+
         # Output Compute Node
         compute_node = FilteringMISONode(
             self.clock.as_readonly(),
