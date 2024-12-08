@@ -1,5 +1,9 @@
-from computation_sim.time.duration_samplers import FixedDuration, GaussianTimeSampler, GammaDistributionSampler
 import pytest
+from computation_sim.time.duration_samplers import (
+    FixedDuration,
+    GammaDistributionSampler,
+    GaussianTimeSampler,
+)
 
 
 def test_fixed_duration():
@@ -8,6 +12,7 @@ def test_fixed_duration():
     assert sampler.sample() == 10
     assert sampler.sample() == 10
     assert sampler.sample() == 10
+
 
 def test_gaussian():
     sampler = GaussianTimeSampler(0.0, 1.0, 1.0, 1.0)
@@ -18,6 +23,7 @@ def test_gaussian():
     data_1 = [sampler.sample() for _ in range(10)]
 
     assert data_0 == data_1
+
 
 def test_gamma():
     sampler = GammaDistributionSampler(1.0, 2.0)
