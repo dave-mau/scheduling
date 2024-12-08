@@ -1,9 +1,14 @@
+from typing import List, NamedTuple
+
 from computation_sim.nodes import (
-    RingBufferNode, FilteringMISONode,SourceNode, SinkNode, OutputNode
+    FilteringMISONode,
+    OutputNode,
+    RingBufferNode,
+    SinkNode,
+    SourceNode,
 )
-from computation_sim.system import System, Action
-from typing import List
-from typing import NamedTuple
+from computation_sim.system import Action, System
+
 
 class ActionCollection(NamedTuple):
     input_buffers: List[RingBufferNode]
