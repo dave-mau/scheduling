@@ -8,6 +8,7 @@ from computation_sim.nodes import (
     SourceNode,
 )
 from computation_sim.system import Action, System
+from computation_sim.time import DurationSampler
 
 
 class ActionCollection(NamedTuple):
@@ -22,3 +23,4 @@ class SystemCollection(NamedTuple):
     sinks: List[SinkNode]
     action_collections: List[ActionCollection]
     output: OutputNode
+    samplers: List[DurationSampler]
