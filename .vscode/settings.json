@@ -3,7 +3,7 @@
         "editor.defaultFormatter": "ms-python.black-formatter",
     },
     "python.testing.pytestArgs": [
-        "."
+        "code"
     ],
     "editor.formatOnSave": true,
     "python.testing.unittestEnabled": false,
