@@ -71,7 +71,7 @@ class InformationLossObserver:
         return counts
 
 
-class HierarchicalSystemBase(gym.Env):
+class HierarchicalSystem(gym.Env):
     metadata = {"render.modes": ["human", "image", "jupyter"], "render_fps": 10}
 
     def __init__(
