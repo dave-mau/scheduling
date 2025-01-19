@@ -3,8 +3,8 @@ import os
 from pathlib import Path
 
 import gymnasium as gym
-from computation_sim_gym import hierarchical
 from gymnasium.wrappers import TimeLimit as TimeLimitWrapper
+from computation_sim_gym import hierarchical
 from stable_baselines3.common.callbacks import EvalCallback, EventCallback
 from stable_baselines3.common.env_checker import check_env
 from stable_baselines3.common.env_util import make_vec_env
@@ -14,9 +14,11 @@ from stable_baselines3.ppo import PPO
 
 def make_env(max_timestep_episode, render_mode=None) -> gym.Env:
     config_path = Path(__file__).absolute().parent / "system_config.json"
-    with open(config_path, "r") as file:
-        config = json.load(file)
-    env = gym.make("ParsedHierarchicalSystem-v0", system_config=config, render_mode=render_mode).unwrapped
+    env = gym.make(
+        "ParsedHierarchicalSystem-v0",
+        system_config_file=config_path,
+        render_mode=render_mode,
+    ).unwrapped
     check_env(env)
     return TimeLimitWrapper(env, max_timestep_episode)
 

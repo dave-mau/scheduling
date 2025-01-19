@@ -1,3 +1,4 @@
+import json
 from collections import defaultdict
 from threading import Thread
 from typing import Dict, List
@@ -222,7 +223,9 @@ class HierarchicalSystem(gym.Env):
 
 
 class ParsedHierarchicalSystem(HierarchicalSystem):
-    def __init__(self, system_config: dict = {}, **kwargs):
+    def __init__(self, system_config_file: str = None, episode_length: int = None, **kwargs):
+        with open(system_config_file, "r") as file:
+            system_config = json.load(file)
         parser = ConfigParser()
         parsed = parser.parse(system_config)
         super().__init__(**parsed, **kwargs)
