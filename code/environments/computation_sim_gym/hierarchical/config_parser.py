@@ -1,5 +1,5 @@
-from typing import Optional
 from collections import defaultdict
+from typing import Optional
 
 from computation_sim.nodes import (
     ConstantNormalizer,
@@ -44,7 +44,7 @@ class ConfigParser:
             raise ValueError(f"Unknown age normalizer type: {config['type']}")
 
     def parse_nodes(self, config: dict, builder: HierarchicalSystemBuilder):
-        #default dict where each entry is an empty list
+        # default dict where each entry is an empty list
         edge_inputs = defaultdict(list)
         for c in config["sensors"]:
             edge_inputs[c["next_id"]].append(
@@ -54,7 +54,8 @@ class ConfigParser:
                     c["period"],
                     self.parse_sampler(c["sensor_sampler"]),
                     self.parse_sampler(c["compute_sampler"]),
-                ))
+                )
+            )
 
         for c in config["edge_computes"]:
             edge_inputs[c["next_id"]].append(
@@ -63,7 +64,8 @@ class ConfigParser:
                     edge_inputs[c["id"]],
                     self.parse_sampler(c["compute_sampler"]),
                     c["filter_threshold"],
-                ))
+                )
+            )
 
         builder.add_output_compute(
             edge_inputs[config["output"]["id"]],
@@ -73,17 +75,18 @@ class ConfigParser:
         builder.build()
 
     def parse_reward(self, config: dict) -> Reward:
-        return Reward(
-            config["cost_message_loss"],
-            config["cost_output_time"],
-            config["cost_input"])
+        return Reward(config["cost_message_loss"], config["cost_output_time"], config["cost_input"])
 
     def parse_sampler(self, config: dict) -> DurationSampler:
         if config["type"] == "GaussianTimeSampler":
-            return GaussianTimeSampler(config["mu"], config["sigma"], config["gain"], config["offset"], name = config.get("name", None))
+            return GaussianTimeSampler(
+                config["mu"], config["sigma"], config["gain"], config["offset"], name=config.get("name", None)
+            )
         elif config["type"] == "GammaDistributionSampler":
-            return GammaDistributionSampler(config["k"], config["theta"], config["gain"], config["offset"], name = config.get("name", None))
+            return GammaDistributionSampler(
+                config["k"], config["theta"], config["gain"], config["offset"], name=config.get("name", None)
+            )
         elif config["type"] == "FixedDuration":
-            return FixedDuration(config["val"], name = config.get("name", None))
+            return FixedDuration(config["val"], name=config.get("name", None))
         else:
             raise ValueError(f"Unknown sampler type: {config['type']}")

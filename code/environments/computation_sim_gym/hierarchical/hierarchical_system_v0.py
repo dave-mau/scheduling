@@ -12,9 +12,9 @@ from computation_sim.system import ImageCreator, SystemDrawer
 from computation_sim.time import Clock, as_age
 from dash import Dash, Input, Output, dcc, html
 
+from .config_parser import ConfigParser
 from .reward import Reward
 from .types import ActionCollection, SystemCollection
-from .config_parser import ConfigParser
 
 
 def count_upstream_sources(system_collection: SystemCollection) -> Dict[Node, int]:

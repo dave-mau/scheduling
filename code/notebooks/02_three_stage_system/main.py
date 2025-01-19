@@ -1,9 +1,9 @@
-import os
 import json
+import os
 from pathlib import Path
 
 import gymnasium as gym
-
+from computation_sim_gym import hierarchical
 from gymnasium.wrappers import TimeLimit as TimeLimitWrapper
 from stable_baselines3.common.callbacks import EvalCallback, EventCallback
 from stable_baselines3.common.env_checker import check_env
@@ -11,7 +11,6 @@ from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import DummyVecEnv, VecFrameStack, VecNormalize
 from stable_baselines3.ppo import PPO
 
-from computation_sim_gym import hierarchical
 
 def make_env(max_timestep_episode, render_mode=None) -> gym.Env:
     config_path = Path(__file__).absolute().parent / "system_config.json"
