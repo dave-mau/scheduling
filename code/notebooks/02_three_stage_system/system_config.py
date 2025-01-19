@@ -31,16 +31,25 @@ class SystemConfig:
         s0 = [
             builder.add_sensor_chain("0", 0, 100, self.input_sampler, self.input_compute_sampler),
             builder.add_sensor_chain("1", 0, 100, self.input_sampler, self.input_compute_sampler),
-        ]
-        s1 = [
             builder.add_sensor_chain("2", 0, 100, self.input_sampler, self.input_compute_sampler),
             builder.add_sensor_chain("3", 0, 100, self.input_sampler, self.input_compute_sampler),
+        ]
+        s1 = [
+            builder.add_sensor_chain("4", 0, 100, self.input_sampler, self.input_compute_sampler),
+            builder.add_sensor_chain("5", 0, 100, self.input_sampler, self.input_compute_sampler),
+            builder.add_sensor_chain("6", 0, 100, self.input_sampler, self.input_compute_sampler),
+            builder.add_sensor_chain("7", 0, 100, self.input_sampler, self.input_compute_sampler),
+        ]
+        s2 = [
+            builder.add_sensor_chain("8", 0, 100, self.input_sampler, self.input_compute_sampler),
+            builder.add_sensor_chain("9", 0, 100, self.input_sampler, self.input_compute_sampler),
         ]
 
         # Set-up the edge nodes
         m = [
             builder.add_edge_compute("0", s0, self.edge_compute_sampler, 90.0),
             builder.add_edge_compute("1", s1, self.edge_compute_sampler, 90.0),
+            builder.add_edge_compute("2", s2, self.edge_compute_sampler, 90.0),
         ]
 
         # Set-up the output node
