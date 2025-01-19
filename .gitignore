@@ -163,3 +163,5 @@ cython_debug/
 
 # tensorboard logs
 **/events.out.tfevents.*
+
+code/notebooks/**/logs/
