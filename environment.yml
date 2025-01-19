@@ -5,6 +5,7 @@ channels:
   - defaults 
 dependencies:
   - python=3.10
+  - pip
   - pytorch
   - pytorch-cuda=12.1
   - torchaudio
@@ -34,6 +35,7 @@ dependencies:
   - moviepy>=1.0.3
   - ffmpeg>=4.4.2
   - x264
-  - ray-rllib>=2.37.0
   - conda-forge::stable-baselines3
   - conda-forge::rich
+  - pip:
+    -  -e code/environments
