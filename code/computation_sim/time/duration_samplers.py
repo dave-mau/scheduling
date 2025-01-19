@@ -15,8 +15,12 @@ class DurationSampler(ABC):
         return self
 
     def reset(self, seed: int = None):
-        if seed is not None:
+        if seed is None:
+            return
+        elif isinstance(seed, int):
             self._rng = np.random.default_rng(seed)
+        else:
+            self._rng = seed
 
     @abstractmethod
     def sample(self) -> Time:

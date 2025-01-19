@@ -156,8 +156,9 @@ class HierarchicalSystem(gym.Env):
 
     def reset(self, seed=None, options=None):
         super().reset(seed=seed, options=options)
+        self._rng = np.random.default_rng(seed)
         for sampler in self._system_collection.samplers:
-            sampler.reset(seed=seed)
+            sampler.reset(self._rng)
         self.clock.reset()
         self.system.reset()
         self.system.update()
