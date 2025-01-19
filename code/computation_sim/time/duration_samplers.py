@@ -7,12 +7,17 @@ from .clock import round_to_fixed_point
 
 
 class DurationSampler(ABC):
-    def __init__(self, seed: int = None):
+    def __init__(self, seed: int = None, name: str = None):
         self._rng = np.random.default_rng(seed)
+        self._name = name
 
     @property
     def rng(self) -> np.random.Generator:
         return self
+
+    @property
+    def name(self) -> str:
+        return self._name
 
     def reset(self, seed: int = None):
         if seed is None:

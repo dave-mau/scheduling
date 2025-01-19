@@ -1,0 +1,298 @@
+{
+    "dt": 10,
+    "clock": {
+        "initial_time": 0
+    },
+    "age_normalizer": {
+        "type": "ConstantNormalizer",
+        "value": 100.0
+    },
+    "count_normalizer": {
+        "type": "ConstantNormalizer",
+        "value": 1.0
+    },
+    "occupancy_normalizer": {
+        "type": "ConstantNormalizer",
+        "value": 1.0
+    },
+    "reward": {
+        "cost_message_loss": 1.0,
+        "cost_output_time": 0.001,
+        "cost_input": 0.01
+    },
+    "sensors": [
+        {
+            "id": "s0",
+            "next_id": "e0",
+            "epoch": 0,
+            "period": 100,
+            "sensor_sampler": {
+                "type": "GaussianTimeSampler",
+                "mu": 0.0,
+                "sigma": 1.0,
+                "gain": 1.0,
+                "offset": 100.0,
+                "name": "sampler_sensor_s0"
+            },
+            "compute_sampler": {
+                "type": "GammaDistributionSampler",
+                "k": 12.0,
+                "theta": 1.0,
+                "gain": 2.0,
+                "offset": 40.0,
+                "name": "sampler_compute_s0"
+            }
+        },
+        {
+            "id": "s1",
+            "next_id": "e0",
+            "epoch": 0,
+            "period": 100,
+            "sensor_sampler": {
+                "type": "GaussianTimeSampler",
+                "mu": 0.0,
+                "sigma": 1.0,
+                "gain": 1.0,
+                "offset": 100.0,
+                "name": "sampler_sensor_s1"
+            },
+            "compute_sampler": {
+                "type": "GammaDistributionSampler",
+                "k": 12.0,
+                "theta": 1.0,
+                "gain": 2.0,
+                "offset": 40.0,
+                "name": "sampler_compute_s1"
+            }
+        },
+        {
+            "id": "s2",
+            "next_id": "e0",
+            "epoch": 0,
+            "period": 100,
+            "sensor_sampler": {
+                "type": "GaussianTimeSampler",
+                "mu": 0.0,
+                "sigma": 1.0,
+                "gain": 1.0,
+                "offset": 100.0,
+                "name": "sampler_sensor_s2"
+            },
+            "compute_sampler": {
+                "type": "GammaDistributionSampler",
+                "k": 12.0,
+                "theta": 1.0,
+                "gain": 2.0,
+                "offset": 40.0,
+                "name": "sampler_compute_s2"
+            }
+        },
+        {
+            "id": "s3",
+            "next_id": "e0",
+            "epoch": 0,
+            "period": 100,
+            "sensor_sampler": {
+                "type": "GaussianTimeSampler",
+                "mu": 0.0,
+                "sigma": 1.0,
+                "gain": 1.0,
+                "offset": 100.0,
+                "name": "sampler_sensor_s3"
+            },
+            "compute_sampler": {
+                "type": "GammaDistributionSampler",
+                "k": 12.0,
+                "theta": 1.0,
+                "gain": 2.0,
+                "offset": 40.0,
+                "name": "sampler_compute_s3"
+            }
+        },
+        {
+            "id": "s4",
+            "next_id": "e1",
+            "epoch": 0,
+            "period": 100,
+            "sensor_sampler": {
+                "type": "GaussianTimeSampler",
+                "mu": 0.0,
+                "sigma": 1.0,
+                "gain": 1.0,
+                "offset": 100.0,
+                "name": "sampler_sensor_s4"
+            },
+            "compute_sampler": {
+                "type": "GammaDistributionSampler",
+                "k": 12.0,
+                "theta": 1.0,
+                "gain": 2.0,
+                "offset": 40.0,
+                "name": "sampler_compute_s4"
+            }
+        },
+        {
+            "id": "s5",
+            "next_id": "e1",
+            "epoch": 0,
+            "period": 100,
+            "sensor_sampler": {
+                "type": "GaussianTimeSampler",
+                "mu": 0.0,
+                "sigma": 1.0,
+                "gain": 1.0,
+                "offset": 100.0,
+                "name": "sampler_sensor_s5"
+            },
+            "compute_sampler": {
+                "type": "GammaDistributionSampler",
+                "k": 12.0,
+                "theta": 1.0,
+                "gain": 2.0,
+                "offset": 40.0,
+                "name": "sampler_compute_s5"
+            }
+        },
+        {
+            "id": "s6",
+            "next_id": "e1",
+            "epoch": 0,
+            "period": 100,
+            "sensor_sampler": {
+                "type": "GaussianTimeSampler",
+                "mu": 0.0,
+                "sigma": 1.0,
+                "gain": 1.0,
+                "offset": 100.0,
+                "name": "sampler_sensor_s6"
+            },
+            "compute_sampler": {
+                "type": "GammaDistributionSampler",
+                "k": 12.0,
+                "theta": 1.0,
+                "gain": 2.0,
+                "offset": 40.0,
+                "name": "sampler_compute_s6"
+            }
+        },
+        {
+            "id": "s7",
+            "next_id": "e1",
+            "epoch": 0,
+            "period": 100,
+            "sensor_sampler": {
+                "type": "GaussianTimeSampler",
+                "mu": 0.0,
+                "sigma": 1.0,
+                "gain": 1.0,
+                "offset": 100.0,
+                "name": "sampler_sensor_s7"
+            },
+            "compute_sampler": {
+                "type": "GammaDistributionSampler",
+                "k": 12.0,
+                "theta": 1.0,
+                "gain": 2.0,
+                "offset": 40.0,
+                "name": "sampler_compute_s7"
+            }
+        },
+        {
+            "id": "s8",
+            "next_id": "e2",
+            "epoch": 0,
+            "period": 100,
+            "sensor_sampler": {
+                "type": "GaussianTimeSampler",
+                "mu": 0.0,
+                "sigma": 1.0,
+                "gain": 1.0,
+                "offset": 100.0,
+                "name": "sampler_sensor_s8"
+            },
+            "compute_sampler": {
+                "type": "GammaDistributionSampler",
+                "k": 12.0,
+                "theta": 1.0,
+                "gain": 2.0,
+                "offset": 40.0,
+                "name": "sampler_compute_s8"
+            }
+        },
+        {
+            "id": "s9",
+            "next_id": "e2",
+            "epoch": 0,
+            "period": 100,
+            "sensor_sampler": {
+                "type": "GaussianTimeSampler",
+                "mu": 0.0,
+                "sigma": 1.0,
+                "gain": 1.0,
+                "offset": 100.0,
+                "name": "sampler_sensor_s9"
+            },
+            "compute_sampler": {
+                "type": "GammaDistributionSampler",
+                "k": 12.0,
+                "theta": 1.0,
+                "gain": 2.0,
+                "offset": 40.0,
+                "name": "sampler_compute_s9"
+            }
+        }
+    ],
+    "edge_computes": [
+        {
+            "id": "e0",
+            "next_id": "output",
+            "compute_sampler": {
+                "type": "GammaDistributionSampler",
+                "k": 3.0,
+                "theta": 1.0,
+                "gain": 2.0,
+                "offset": 30.0,
+                "name": "sampler_compute_e0"
+            },
+            "filter_threshold": 90.0
+        },
+        {
+            "id": "e1",
+            "next_id": "output",
+            "compute_sampler": {
+                "type": "GammaDistributionSampler",
+                "k": 3.0,
+                "theta": 1.0,
+                "gain": 2.0,
+                "offset": 30.0,
+                "name": "sampler_compute_e1"
+            },
+            "filter_threshold": 90.0
+        },
+        {
+            "id": "e2",
+            "next_id": "output",
+            "compute_sampler": {
+                "type": "GammaDistributionSampler",
+                "k": 3.0,
+                "theta": 1.0,
+                "gain": 2.0,
+                "offset": 30.0,
+                "name": "sampler_compute_e2"
+            },
+            "filter_threshold": 90.0
+        }
+    ],
+    "output": {
+        "id": "output",
+        "compute_sampler": {
+            "type": "GammaDistributionSampler",
+            "k": 6.0,
+            "theta": 1.0,
+            "gain": 3.0,
+            "offset": 50.0,
+            "name": "sampler_output"
+        },
+        "filter_threshold": 90.0
+    }
+}

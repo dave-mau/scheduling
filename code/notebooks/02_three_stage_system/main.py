@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 from pathlib import Path
 
 import gymnasium as gym
@@ -10,13 +11,16 @@ from stable_baselines3.common.callbacks import EvalCallback, EventCallback
 from stable_baselines3.common.env_checker import check_env
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.vec_env import DummyVecEnv, VecFrameStack, VecNormalize
-from stable_baselines3.dqn import DQN
 from stable_baselines3.ppo import PPO
-from system_config import SystemConfig
+
+from environments import hierarchical
 
 
 def make_env(max_timestep_episode, render_mode=None) -> gym.Env:
-    env = gym.make("HierarchicalSystem-v0", **SystemConfig().make(), render_mode=render_mode).unwrapped
+    config_path = Path(__file__).absolute().parent / "system_config.json"
+    with open(config_path, "r") as file:
+        config = json.load(file)
+    env = gym.make("ParsedHierarchicalSystem-v0", system_config=config, render_mode=render_mode).unwrapped
     check_env(env)
     return TimeLimitWrapper(env, max_timestep_episode)
 

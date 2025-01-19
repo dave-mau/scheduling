@@ -66,7 +66,7 @@ class ConfigParser:
                 ))
 
         builder.add_output_compute(
-            edge_inputs["output"]["id"],
+            edge_inputs[config["output"]["id"]],
             self.parse_sampler(config["output"]["compute_sampler"]),
             config["output"]["filter_threshold"],
         )
@@ -78,16 +78,12 @@ class ConfigParser:
             config["cost_output_time"],
             config["cost_input"])
 
-
-    def parse_sensor_chain(self, config: dict, builder: HierarchicalSystemBuilder) -> RingBufferNode:
-        return
-
     def parse_sampler(self, config: dict) -> DurationSampler:
         if config["type"] == "GaussianTimeSampler":
-            return GaussianTimeSampler(config["mu"], config["std"], config["gain"], config["offset"])
+            return GaussianTimeSampler(config["mu"], config["sigma"], config["gain"], config["offset"], name = config.get("name", None))
         elif config["type"] == "GammaDistributionSampler":
-            return GammaDistributionSampler(config["k"], config["theta"], config["gain"], config["offset"])
+            return GammaDistributionSampler(config["k"], config["theta"], config["gain"], config["offset"], name = config.get("name", None))
         elif config["type"] == "FixedDuration":
-            return FixedDuration(config["val"])
+            return FixedDuration(config["val"], name = config.get("name", None))
         else:
             raise ValueError(f"Unknown sampler type: {config['type']}")

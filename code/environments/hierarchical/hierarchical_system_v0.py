@@ -222,7 +222,7 @@ class HierarchicalSystem(gym.Env):
 
 
 class ParsedHierarchicalSystem(HierarchicalSystem):
-    def __init__(self, config: dict, **kwargs):
+    def __init__(self, system_config: dict = {}, **kwargs):
         parser = ConfigParser()
-        parsed = parser.parse(config)
+        parsed = parser.parse(system_config)
         super().__init__(**parsed, **kwargs)
