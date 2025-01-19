@@ -14,6 +14,7 @@ from dash import Dash, Input, Output, dcc, html
 
 from .reward import Reward
 from .types import ActionCollection, SystemCollection
+from .config_parser import ConfigParser
 
 
 def count_upstream_sources(system_collection: SystemCollection) -> Dict[Node, int]:
@@ -218,3 +219,10 @@ class HierarchicalSystem(gym.Env):
             return self.drawer.fw
         else:
             pass
+
+
+class ParsedHierarchicalSystem(HierarchicalSystem):
+    def __init__(self, config: dict, **kwargs):
+        parser = ConfigParser()
+        parsed = parser.parse(config)
+        super().__init__(**parsed, **kwargs)
