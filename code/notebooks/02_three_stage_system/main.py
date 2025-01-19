@@ -86,7 +86,7 @@ def main(params, paths: SavePaths):
         verbose=1,
         callback_on_new_best=SaveVecNormalize(),
     )
-    model = PPO("MlpPolicy", n_steps=256, env=envs_train, device="cpu", verbose=0, tensorboard_log=paths.tensorboard)
+    model = PPO("MlpPolicy", n_steps=512, env=envs_train, device="cpu", verbose=0, tensorboard_log=paths.tensorboard)
     model.learn(
         total_timesteps=params["total_timesteps_train"], callback=eval_callback, progress_bar=True, tb_log_name="ppo"
     )
@@ -114,13 +114,13 @@ if __name__ == "__main__":
     params = {
         "n_envs_train": 8,
         "n_envs_eval": 1,
-        "n_episodes_eval": 10,
+        "n_episodes_eval": 30,
         "seed_train": 100,
         "seed_eval": 1000,
         "freq_eval": int(10 * 60 * 1_000 / 10),
-        "total_timesteps_train": int(10 * 60 * 60 * 1_000 / 10),
-        "episode_length": int(1 * 60 * 1_000 / 10),
+        "total_timesteps_train": int(3 * 60 * 60 * 1_000 / 10),
+        "episode_length": int(10 * 1_000 / 10),
     }
     paths = SavePaths()
-    #main(params, paths)
+    main(params, paths)
     run(params, paths)

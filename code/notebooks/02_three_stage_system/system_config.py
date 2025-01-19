@@ -10,9 +10,9 @@ from environments.hierarchical import HierarchicalSystemBuilder, Reward
 class SystemConfig:
     def __init__(self, dt=10):
         self.input_sampler = GaussianTimeSampler(0.0, 1.0, 1.0, 100.0)
-        self.input_compute_sampler = GammaDistributionSampler(5.0, 1.0, 3.0, 30.0)
-        self.edge_compute_sampler = GammaDistributionSampler(3.0, 1.0, 1.0, 30.0)
-        self.global_compute_sampler = GammaDistributionSampler(9.0, 1.0, 3.0, 30.0)
+        self.input_compute_sampler = GammaDistributionSampler(12.0, 1.0, 2.0, 40.0)
+        self.edge_compute_sampler = GammaDistributionSampler(3.0, 1.0, 2.0, 30.0)
+        self.global_compute_sampler = GammaDistributionSampler(6.0, 1.0, 3.0, 50.0)
         self.age_normalizer = ConstantNormalizer(100.0)
         self.count_normalizer = ConstantNormalizer(1.0)
         self.occupancy_normalizer = ConstantNormalizer(1.0)
