@@ -37,5 +37,7 @@ dependencies:
   - x264
   - conda-forge::stable-baselines3
   - conda-forge::rich
+  - conda-forge::wandb
   - pip:
     -  -e code/environments
+    -  -e code/rl-baselines3-zoo
