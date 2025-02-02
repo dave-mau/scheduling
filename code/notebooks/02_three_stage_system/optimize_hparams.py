@@ -101,6 +101,9 @@ def parse_args():
                         help='Name of the optimization study')
     parser.add_argument('--n-processes', type=int, default=1,
                         help='Number of parallel processes to use')
+    parser.add_argument('--reset-log-directories', action='store_true', default=False,
+                        help='Delete all previous log directories')
+    parser.add_argument('--drop-database', action='store_true', default=False, help='Drop the optuna database.')
     return parser.parse_args()
 
 
@@ -115,17 +118,20 @@ def main():
     opt_data_dir: Path = Path(__file__).absolute().parent / "logs" / "hparam"
 
     # Wipe data directories
-    if data_dir.exists():
-        shutil.rmtree(data_dir)
-    if opt_data_dir.exists():
-        shutil.rmtree(opt_data_dir)
+    if args.reset_log_directories:
+        print("Deleting previous log directories")
+        if data_dir.exists():
+            shutil.rmtree(data_dir)
+        if opt_data_dir.exists():
+            shutil.rmtree(opt_data_dir)
     data_dir.mkdir(parents=True)
     opt_data_dir.mkdir(parents=True)
 
     # Initialize MySQL database
     sql_server = MySQLServer(user="root")
     sql_server.check_server_running()
-    if sql_server.database_exists(trial_name):
+    if sql_server.database_exists(trial_name) and args.drop_database:
+        print("Dropping previous database")
         sql_server.drop_database(trial_name)
     sql_server.create_database(trial_name)
 
