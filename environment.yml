@@ -17,6 +17,8 @@ dependencies:
   - matplotlib>=3.8
   - networkx>=3.3
   - numpy>=1.26
+  - mysql
+  - mysql-connector-python
   - pandas>=2.2
   - scipy>=1.13
   - sympy>=1.12
