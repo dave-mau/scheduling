@@ -82,16 +82,20 @@ class HierarchicalSystem(gym.Env):
         system_collection: SystemCollection,
         reward: Reward,
         dt: Time = 10,
+        max_time_steps=None,
         render_mode=None,
         window_size=(800, 800),
         **kwargs
     ):
         super().__init__(**kwargs)
+        
         # Store init params
         self.clock: Clock = clock
         self._system_collection: SystemCollection = system_collection
         self._reward: Reward = reward
         self._dt = dt
+        self._max_time_steps = max_time_steps
+        self._num_steps = 0
 
         # Set dimensionality of action / observation spaces
         self.action_space = gym.spaces.Discrete(system.num_actions(self.system.num_action))
@@ -164,6 +168,7 @@ class HierarchicalSystem(gym.Env):
         self.clock.reset()
         self.system.reset()
         self.system.update()
+        self._num_steps = 0
         return self.state, {}
 
     def act(self, action: List[int]):
@@ -200,8 +205,10 @@ class HierarchicalSystem(gym.Env):
         self._draw()
         self.render()
 
-        # Build the reward
-        return self.state, reward, False, False, info
+        # Termination
+        self._num_steps += 1
+        done = self._max_time_steps and self._num_steps >= self._max_time_steps
+        return self.state, reward, False, done, info
 
     def _draw(self):
         if self.drawer is not None:
@@ -223,9 +230,9 @@ class HierarchicalSystem(gym.Env):
 
 
 class ParsedHierarchicalSystem(HierarchicalSystem):
-    def __init__(self, system_config_file: str = None, episode_length: int = None, **kwargs):
+    def __init__(self, system_config_file: str = None, max_time_steps: int = None, **kwargs):
         with open(system_config_file, "r") as file:
             system_config = json.load(file)
         parser = ConfigParser()
         parsed = parser.parse(system_config)
-        super().__init__(**parsed, **kwargs)
+        super().__init__(**parsed, max_time_steps=max_time_steps, **kwargs)

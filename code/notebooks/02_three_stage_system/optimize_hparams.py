@@ -57,11 +57,11 @@ def run_training(system_config_path: Path, opt_log_path: Path, log_path: Path, d
         "ParsedHierarchicalSystem-v0",
         "--env-kwargs",
         f'system_config_file:"{str(system_config_path)}"',
-        "episode_length:1000",
+        "max_time_steps:6000", # 6_000 steps (10ms per step) = 1 minute
         "render_mode:None",
         "--eval-env-kwargs",
         f'system_config_file:"{str(system_config_path)}"',
-        "episode_length:1000",
+        "max_time_steps:6000", # 6_000 steps (10ms per step) = 1 minute
         "render_mode:None",
         "--optimization-log-path",
         f"{str(opt_log_path)}",
@@ -79,7 +79,7 @@ def run_training(system_config_path: Path, opt_log_path: Path, log_path: Path, d
         "--n-evaluations",
         "10",
         "--eval-episodes",
-        "30",
+        "5", # 5 episodes, 1 minute each = 5 minutes
         "--n-eval-envs",
         "1",
         "--vec-env",
@@ -89,7 +89,9 @@ def run_training(system_config_path: Path, opt_log_path: Path, log_path: Path, d
         "--study-name",
         study_name,
         "--n-trials",
-        str(math.ceil(600 / num_procs))
+        str(math.ceil(600 / num_procs)),
+        "--verbose", "1",
+        "--n-startup-trials", "0"
     ]
 
     # Run the command blocking
